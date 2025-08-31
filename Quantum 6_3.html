@@ -1,0 +1,1924 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Quantum</title>
+
+        <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+        <meta name="description" content="Quantum">
+        <meta name="author" content="joekahr@gmail.com">
+        <meta name="generator" content="J. Kahr">
+        <meta name="version" content="6.3">
+        <meta name="viewport" content="width=device-width,user-scalable=0,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0">
+	
+        <style type="text/css">
+			canvas{background-color:#000000; overflow:hidden}
+			body  {margin:0;padding:0}
+			td {height:12px; width:100px; padding:0px}
+			th, tr {height:12px; padding:0px}
+        </style>
+    </head>
+
+    <body onload="load();" onresize="resize(false);" style="background-color:rgb(0,0,0);">
+
+        <canvas id="canvas" oncontextmenu="return false;" style="background-color:rgba(0, 0, 0, 0); position:absolute; z-index:2; visibility:hidden;"></canvas>
+        
+		<div id="start_page" style="text-align:center; background-color:rgb(0,0,0); position:absolute; width:100%; height:100%; left:0%; top:0px; visibility:visible;">
+<!-- 			<br>
+			<button id="dblslit_button" type="button" style="text-align:center; background-color:rgb(0,255,0);">Light Waves</button>
+			<br> -->
+			<br>
+			<button id="free_button" type="button" style="text-align:center; background-color:rgb(0,255,0);">Matter Waves</button>
+        </div>
+
+        <div id="controls" style="background-color:rgba(0,0,0,0); margin-top:auto; margin-bottom:auto; position:absolute; color:rgb(255,255,255); font-family:times; z-index:3; visibility:hidden;">
+            <button id="exit_button" type="button">exit</button>&nbsp;&nbsp;&nbsp;
+            <span title="show annotation"><input id="notation_checkbox" type="checkbox">notation</span>&nbsp;&nbsp;&nbsp;
+            <span id="time_span" title="time of stationary frame&#013;[Click to change value]" style="padding:0px;">t = <span id="time">0</span> s</span><br>
+            <span title="animation direction in time">time direction:
+            <span id="backward_radio" title="animate backward in time"><input id="backward_button" type="radio" name="time_direction">backward</span>
+            <span id="forward_radio" title="animate forward in time"><input id="forward_button" type="radio" name="time_direction">forward</span>
+        	</span><br>
+            <span title="show forward-in-time waves"><input  id="retarded_checkbox" type="checkbox">retarded waves</span>
+			<span title="show backward-in-time waves"><input id="advanced_checkbox" type="checkbox">advanced waves</span><br>
+            <button id="faster_button" type="button" title="increase animation rate x2">faster</button>
+            <button id="slower_button" type="button" title="decrease animation rate x2">slower</button>
+            <button id="pause_resume_button" type="button" title="pause/resume animation">pause </button>
+			<button id="reset_button" type="button" title="reset animation">reset</button><br>
+            <span id="single_steps" title="step animation backward/forward while paused">single step:
+            <button id="stepbackward_button" type="button" title="step animation backward in time">backward</button>
+            <button id="stepforward_button" type="button" title="step animation forward in time">forward</button>
+        	</span>
+		
+	        <div id="dblslit_controls" style="background-color:rgba(0,0,0,0); margin-top:auto; margin-bottom:auto; position:absolute; color:rgb(255,255,255); font-family:times; z-index:3; visibility:hidden;">
+				open slits:
+				<input id="left_slit_checkbox" type="checkbox">left slit
+				<input id="right_slit_checkbox" type="checkbox">right slit<br>
+	            show:<br>
+	            <input id="overlap_checkbox" type="checkbox">overlap only<br>
+	            <input id="pattern_checkbox" type="checkbox">interference pattern<br>
+				<input id="source_waves_checkbox" type="checkbox">source waves
+				<input id="destination_waves_checkbox" type="checkbox">destination waves<br>
+	            </span><br>
+	            <span id="set_srcdest">
+	            <button id="source_button" type="button">set source</button>
+	            <button id="destination_button" type="button">set destination</button><br>
+	            </span>
+	           	<input id="inspector_checkbox" type="checkbox">inspector<br>
+	        </div>
+        
+	        <div id="freeparticle_controls" style="background-color:rgba(0,0,0,0); margin-top:auto; margin-bottom:auto; position:absolute; color:rgb(255,255,255); font-family:times; z-index:3; visibility:hidden;">
+	        	<!-- wave amplitude:
+	        	<input id="complex_button" type="radio" name="wave_type">complex
+	        	<input id="real_button"    type="radio" name="wave_type">real<br>
+	        	<br> -->
+	        	<span title="Particle Speed v&#013;(0 <= v < c)" id="SpeedSlider">
+	          		<span style="font-family:cambria_math">speed (v): 0</span>
+		          	<input id="speed_range" type="range" min="0" max="1000" value="0" class="slider"
+		          	style="background:rgb(126,126,126); width:150px; height:10px; vertical-align:middle">
+		          	<span style="font-family:cambria_math">c</span>
+	      		</span><br>
+	          	<span id="v_over_c_span" title="group velocity as fraction of c (0 <= v/c < 1)&#013;[Click to change value]">v/c = <span id="v_over_c">0</span></span>
+	          	&nbsp;&nbsp;&nbsp;
+	          	<span id="v_span" title="group velocity (0 <= v < c)&#013;[Click to change value]">v = <span id="v">0</span> m/s</span>
+	        	<br>
+	        	<span id="u_over_c_span" title="phase velocity as fraction of c&#013;[Click to change value]">u/c = <span id="u_over_c"></span></span>
+	          	&nbsp;&nbsp;&nbsp;
+	          	<span id="u_span" title="phase velocity (1 < u < &infin;)&#013;[Click to change value]">u = <span id="u">Infinity</span> m/s</span>
+	        	<br>
+	        	<span id="gamma_span" title="Lorentz factor: ratio for length contraction and time dilation&#013;[Click to change value]" style="padding:0px; font-family:times">
+	          		<span style="font-family:cambria_math">&gamma; = </span><span id="gamma">1</span>
+	          	</span><br>
+	          	<span title="Change Animation Scale">zoom:</span>
+        		<button title="Zoom Out" id="zoom_out_button" style="font-weight:bold; text-align:center; padding:0px; width:30px;">-</button>
+        		<button title="Undo Zooming" id="zoom_zero_button" style="font-weight:bold; text-align:center; padding:0px; width:30px;">0</button>
+        		<button title="Zoom In" id="zoom_in_button" style="font-weight:bold; text-align:center; padding:0px; width:30px;">+</button><br>
+	          	<span title="wave details [drag crosshairs to any wave location]"><input id="free_inspector_checkbox" type="checkbox">inspector</span><br>
+	          	<div id="inspector" style="background-color:rgba(0,0,0,0); margin-top:auto; margin-bottom:auto; position:absolute; color:rgb(255,255,255); font-family:times; z-index:3; visibility:hidden;">
+	          		<span id="stationary_radio" title="stay stationary at speed v = 0"><input id="stationary_button" type="radio" name="inspector_motion">stationary</span><br>
+            		<span id="particle_radio" title="move with particle at speed v"><input id="group_button" type="radio" name="inspector_motion">move with particle</span><br>
+            		<span id="de_Broglie_radio" title="move with de Broglie wave at speed c&sup2;/v"><input id="phase_button" type="radio" name="inspector_motion">move with de Broglie wave</span><br>
+	          		&nbsp;&nbsp;&nbsp;[c = h = m = f = 1]<br>
+	          		<span title="particle location">particle: ( 
+		          		<span id="x_particle" title="x coordinate of particle">0</span>&nbsp;, 
+		          		<span id="y_particle" title="y coordinate of particle">0</span></span> )<br>
+	        		<span title="location of inspection point">inspector:
+		        		x = <span id="x" title="x coordinate of inspection point">0</span>&nbsp;&nbsp;
+		        		y = <span id="y" title="y coordinate of inspection point">0</span></span><br>
+	        		<span title="x distance from particle to inspection point">dx = <span id="dx">0</span></span>&nbsp;&nbsp;&nbsp;
+	        		<span title="y distance from particle to inspection point">dy = <span id="dy">0</span></span><br>
+	        		<span title="sum of real amplitudes of retarded and advanced waves">amplitude sum = <span id="real">0</span></span><br>
+	        		<table>
+	        			<tr title="waves arriving at inspection point from both time directions"><td>wave</td>
+	        				<td title="forward-in-time wave" style="color:lime">retarded</td>
+	        				<td title="backward-in-time wave" style="color:red">advanced</td></tr>
+	        			<tr title="distances from wave origins to inspection point"><td>r</td>
+	        				<td id="r1" title="distance from retarded wave origin to inspection point">0</td>
+	        				<td id="r2" title="distance from advanced wave origin to inspection point">0</td></tr>       				
+	        			<tr title="delta x distances"><td>dx</td>
+	        				<td id="dx1" title="x distance from retarded wave origin to inspection point">0</td>
+	        				<td id="dx2" title="x distance from advanced wave origin to inspection point">0</td></tr>
+	        			<tr title="x location of wave origins"><td>x</td>
+	        				<td id="x1" title="x location of retarded wave origin">0</td>
+	        				<td id="x2" title="x location of advanced wave origin">0</td></tr>
+	        			<tr title="delta times"><td>dt</td>
+	        				<td id="dt1" title="time since retarded wave origin">0</td>
+	        				<td id="dt2" title="time until advanced wave origin">0</td></tr>
+	        			<tr title="time waves leave origins"><td>t</td>
+	        				<td id="t1" title="time of retarded wave origin">0</td>
+	        				<td id="t2" title="time of advanced wave origin">0</td></tr>
+	        			<tr title="cycles of waves"><td>cycle</td>
+	        				<td id="cycle1" title="cycle of retarded wave">0</td>
+	        				<td id="cycle2" title="cycle of advanced wave">0</td></tr>
+	        			<tr title="phases of waves"><td>phase</td>
+	        				<td id="phase1" title="phase of retarded wave [radians]">0</td>
+	        				<td id="phase2" title="phase of advanced wave [radians]">0</td></tr>
+	        			<tr title="real amplitudes of waves"><td>amplitude</td>
+	        				<td id="real1" title="real amplitude of retarded wave">0</td>
+	        				<td id="real2" title="real amplitude of advanced wave">0</td></tr>
+	        		</table>
+        		</div>
+
+	        </div>
+
+        </div>
+
+    </body>
+		
+		<script type="text/javascript">
+		
+/*
+ * http://jmvidal.cse.sc.edu/talks/javascript/complexnumbersexample.html
+ *
+ * Complex.js:
+ * This file defines a Complex class to represent complex numbers.
+ * Recall that a complex number is the sum of a real number and an
+ * imaginary number and that the imaginary number i is the
+ * square root of -1.
+ */
+
+/*
+ * The first step in defining a class is defining the constructor
+ * function of the class. This constructor should initialize any
+ * instance properties of the object. These are the essential
+ * "state variables" that make each instance of the class different.
+ */
+function Complex(real, imaginary) {
+    this.Re = real;       // real part of the number
+    this.Im = imaginary;  // imaginary part of the number
+}
+
+/*
+ * The second step in defining a class is defining its instance
+ * methods (and possibly other properties) in the prototype object
+ * of the constructor. Any properties defined in this object will
+ * be inherited by all instances of the class. Note that instance
+ * methods operate implicitly on the 'this' keyword. For many methods,
+ * no other arguments are needed.
+ */
+
+Complex.prototype.toPhasor = function () { return new Phasor(Math.sqrt(this.Re*this.Re + this.Im*this.Im,Math.atan(this.Im/this.Re))); };
+
+// Return the modulus of this complex number. This is defined as
+// its distance from the origin (0,0) of the complex plane.
+Complex.prototype.modulus = function() { return Math.sqrt(this.Re*this.Re + this.Im*this.Im); };
+
+// Return the phase (aka complex argument) of this complex number. This is defined as
+// the counterclockwise angle from the positive real axis
+Complex.prototype.phase = function() { return Math.atan(this.Im/this.Re); };  // returned angle is in radians
+
+// Return a complex number that is the negative of this one.
+Complex.prototype.negative = function() { return new Complex(-this.Re, -this.Im); };
+
+// Return a complex number that is the conjugate of this one.
+Complex.prototype.conjugate = function() { return new Complex(this.Re, -this.Im); };
+
+// Add a complex number to this one and return the sum in a new object.
+Complex.prototype.add = function(that) { return new Complex(this.Re + that.Re, this.Im + that.Im); };
+
+// Multiply this complex number by another and return the product as a
+// new Complex object.
+Complex.prototype.multiply = function(that) { return new Complex(this.Re * that.Re - this.Im * that.Im, this.Re * that.Im + this.Im * that.Re); };
+
+// Convert this complex number to a string in a useful way.
+// This is invoked when a Complex object is used as a string.
+Complex.prototype.toString = function() { return "(" + this.Re + ",i*" + this.Im + ")"; };
+
+// Return the real portion of this complex number. This function
+// is invoked when a Complex object is treated as a primitive value.
+Complex.prototype.PhasorOf = function() { return this.Re; };
+
+// Test whether this complex number has the same value as another.
+Complex.prototype.equals = function(that) { return this.Re == that.Re && this.Im == that.Im; };
+
+// Return the real portion of this complex number
+Complex.prototype.real = function() { return this.Re; };
+
+// Return the imaginary portion of this complex number
+Complex.prototype.imaginary = function() { return this.Im; };
+
+/*
+ * The third step in defining a class is to define class methods,
+ * constants, and any needed class properties as properties of the
+ * constructor function itself (instead of as properties of the
+ * prototype object of the constructor). Note that class methods
+ * do not use the 'this' keyword: they operate only on their arguments.
+ */
+
+// Add two complex numbers and return the result.
+// Contrast this with the instance method add()
+Complex.sum = function (z1, z2) { return new Complex(z1.Re + z2.Re, z1.Im + z2.Im); };
+
+// Multiply two complex numbers and return the product.
+// Contrast with the instance method multiply()
+Complex.product = function(z1, z2) { return new Complex(z1.Re * z2.Re - z1.Im * z2.Im, z1.Re * z2.Im + z1.Im * z2.Re); };
+
+// Return the modulus (aka modulus) of a complex number. This is defined as
+// its distance from the origin (0,0) of the complex plane.
+Complex.modulus = function(z) { return Math.sqrt(z.Re*z.Re + z.Im*z.Im); };
+
+// Return the phase (aka complex argument) of a complex number. This is defined as
+// the counterclockwise angle from the positive real axis
+Complex.phase = function(z) { return Math.atan(z.Im/z.Re); };  // returned angle is in radians
+
+// Return a complex number that is the negative of this one.
+Complex.negative = function(z) { return new Complex(-z.Re, -z.Im); };
+
+// Return the complex conjugate of a complex number
+Complex.conjugate = function(z) { return new Complex(z.Re, -z.Im); };
+
+// Test whether two complex numbers have the same value.
+Complex.equal = function(z1,z2) { return z1.Re == z2.Re && z1.Im == z2.Im; };
+
+// Return the real portion of a complex number
+Complex.real = function(z) { return z.Re; };
+
+// Return the imaginary portion of a complex number
+Complex.imaginary = function(z) { return z.Im; };
+
+// Here are some useful predefined complex numbers.
+// They are defined as class properties, and their names are in uppercase
+// to indicate that they are intended to be constants (although it is not
+// possible to make JavaScript properties read-only).
+Complex.ZERO = new Complex(0,0);
+Complex.ONE = new Complex(1,0);
+Complex.I = new Complex(0,1);
+
+function waveSum(Re, Im, n)
+{
+	this.Re = Re;
+	this.Im = Im;
+	this.n = n; // number of waves at location
+}
+
+function Phasor(modulus, phase) {
+    this.modulus = modulus;       // The modulus of the complex number
+    this.phase = phase;  // The complex argument
+}
+
+Phasor.prototype.toString = function() { return "phase = " + (this.phase % (2*Math.PI)).toPrecision(5) + "   modulus = " + (this.modulus).toPrecision(5); };
+
+Phasor.prototype.Re = function() {return this.modulus*Math.cos(this.phase); };
+
+Phasor.prototype.Im = function() {return this.modulus*Math.sin(this.phase); };
+ 
+Phasor.prototype.toComplex = function () {return new Complex(this.Re, this.Im); };
+
+Phasor.prototype.from_ReIm = function(Re, Im)
+{
+	this.modulus = Math.sqrt(Re*Re + Im*Im);
+	if (Re == 0)
+	{
+		if (Im == 0) 	{this.phase = 0;}
+		else if (Im > 0){this.phase = Math.PI/2;}
+		else 			{this.phase = 3*Math.PI/2;}
+	}
+	else if (Re > 0)
+	{
+		if (Im >= 0) 	{this.phase = Math.atan(Im/Re);}
+		else 			{this.phase = 2*Math.PI - Math.atan(-Im/Re);}
+	}
+	else
+	{
+		if (Im >= 0) 	{this.phase = Math.PI - Math.atan(Im/(-Re));}
+		else			{this.phase = Math.PI + Math.atan(Im/Re);}
+	}
+};
+
+Phasor.fromComplex = function(z) {return new Phasor(distance(0, 0, z.Re, z.Im), Math.atan(z.Im/z.Re)); };
+
+Phasor.from_ReIm = function(Re, Im)
+{
+	var modulus = Math.sqrt(Re*Re + Im*Im);
+	if (Re == 0)
+	{
+		if (Im == 0) 	{return null_phasor;}
+		else if (Im > 0) {return new Phasor(modulus, Math.PI/2);}
+		else 			{return new Phasor(modulus, 3*Math.PI/2);}
+	}
+	else if (Re > 0)
+	{
+		if (Im >= 0) 	{return new Phasor(modulus, Math.atan(Im/Re));}
+		else 			{return new Phasor(modulus, 2*Math.PI - Math.atan(-Im/Re));}
+	}
+	else
+	{
+		if (Im >= 0) 	{return new Phasor(modulus, Math.PI - Math.atan(Im/(-Re)));}
+		else			{return new Phasor(modulus, Math.PI + Math.atan(Im/Re));}
+	}
+};
+
+Phasor.sum = function(p1, p2) {
+	var x1 = p1.modulus*Math.cos(p1.phase);
+	var y1 = p1.modulus*Math.sin(p1.phase);
+	var x2 = p2.modulus*Math.cos(p2.phase);
+	var y2 = p2.modulus*Math.sin(p2.phase);
+	return Phasor.from_ReIm(x1 + x2, y1 + y2);
+};
+
+var null_phasor = new Phasor(0, 0);
+
+// Wave from a point source
+function Wave(id, retarded, src_side, t0, x0, y0, modulus0, phase0)
+{
+    this.id = id;
+    this.retarded = retarded;   // true:retarded  false:advanced
+    this.src_side = src_side; 	// wave is on same side as source
+	this.t0 = t0;       		// time when wave train originates from its origin
+    this.x0 = x0;       		// x location of wave origin
+    this.y0 = y0;       		// y location of wave origin (y0 == half_h means at slits)
+	this.modulus0 = modulus0;   // modulus of wave at origin at t0
+	this.phase0 = phase0;       // phase of wave at origin at t0 [radians]
+}
+
+Wave.prototype.toString = function()
+{
+    var type;
+    
+    if (this.retarded) {type = "Retarded Wave";} else {type = "Advanced Wave";}
+    return  type + "   " + this.id + "   t0 = " +
+            this.t0 + "   x0,y0 = " + this.x0 + "," + this.y0 +
+			"   modulus0,phase0 = " + this.modulus0 + "," + this.phase0 % (2*Math.PI) +
+			"   frequency = " + frequency + "   coherence_time =  " + coherence_time;
+};
+
+Wave.prototype.onLightCone = function(d)
+{
+    if (this.retarded) 	{return ((t >= this.t0) && (d >= t - this.t0 - coherence_time) && (d <= t - this.t0));}
+    else 				{return ((t <= this.t0) && (d >= this.t0 - coherence_time - t) && (d <= this.t0 - t));}
+};
+
+Wave.prototype.phasor = function(d)
+{
+	var modulus, phase;
+	
+    if (this.retarded)
+    {
+        phase = this.phase0 + 2*Math.PI*frequency*(t - this.t0 - d);
+    }
+    else
+    {
+        phase = this.phase0 + 2*Math.PI*frequency*(t - this.t0 + d);
+        if (this.y0 != half_h)	phase = Math.PI + phase; // wave not centered on slit
+    }
+	phase = phase % (2*Math.PI);
+	if (phase < 0) phase = 2*Math.PI + phase;
+    modulus = this.modulus0; // undiminished by distance
+	//modulus = (1-d/h_full)*this.modulus0; // diminish wave modulus with increasing radius, down to zero at full height of window
+	//alert("forwardLightCone t,d = " + t + " , " + d + "   modulus, phase = " + modulus + " , " + phase);
+	return new Phasor(modulus, phase);
+};
+
+Wave.prototype.toComplex = function(d) {return(this.phasor(d).toComplex());};
+
+Wave.prototype.hasValue = function(x, y)
+{
+    if ((this.retarded && !ret_waves) || (!this.retarded && !adv_waves)) return false;
+	if (this.y0 == half_h) // wave centered on slit
+	{
+		if (this.src_side && y < half_h) return false;
+		if (!this.src_side &&  y > half_h) return false;
+	}
+	else // wave not centered on slit
+	{
+		if (this.src_side && y < half_h) return false;
+		if (!this.src_side && y > half_h) return false;
+	}
+	//alert("t = " + t + "   x = " + x + "   y = " + y);
+	//alert(this.onLightCone(distance(this.x0, this.y0, x, y)));
+	return this.onLightCone(distance(this.x0, this.y0, x, y));
+};
+
+Wave.prototype.value = function(x, y) {return this.phasor(distance(this.x0,this.y0,x,y));};
+
+// radius calculations
+Wave.prototype.innerRadius = function()
+{
+    if (this.retarded)
+        if (t > this.t0 + coherence_time) {return (t - this.t0 - coherence_time);}
+        else {return 0; }
+    else
+        if (t < this.t0 + coherence_time) {return (this.t0 + coherence_time - t);}
+        else {return 0;}
+};
+
+Wave.sum = function (wave1, wave2) {return Complex.sum(wave1.toComplex, wave2.toComplex);};
+		
+function $i(id) { return document.getElementById(id); }
+//function $r(parent,child) { (document.getElementById(parent)).removeChild(document.getElementById(child)); }
+//function $t(name) { return document.getElementsByTagName(name); }
+//function $c(code) { return String.fromCharCode(code); }
+//function $h(value) { return ('0'+Math.max(0,Math.min(255,Math.round(value))).toString(16)).slice(-2); }
+//function _i(id,value) { $t('div')[id].innerHTML+=value; }
+//function _h(value) { return !hires?value:Math.round(value/2); }
+
+//function Angle() {this.radians;}
+
+function Point2D(x, y) {this.x = x; this.y = y;}
+Point2D.prototype.toString = function() { return "x = " + this.x + "   y = " + this.y; };
+Point2D.distance = function(P1, P2) {return distance(P1.x, P1.y, P2.x, P2.y); };
+
+var frame_timerID;  //interval timer ID
+var started=false;
+var inspector, ret_waves, adv_waves, src_waves, dest_waves, left_slit, right_slit, paused, overlap_only, notation;  // checkbox toggles
+var inspector_motion; // 'stationary' or 'particle' or 'de Broglie'
+var t,delta_t; // t is proportional to time in seconds (actual time = t/fps)
+var v,u,c,gamma;
+const c_value = 299792458; // [m/s]
+ 
+// free particle variables
+var mode; //'dblslit' or 'free'
+var centered = false;
+var dt_1,dt_2;
+var t1,t2;
+var x1,x2;
+var phase1,phase2;
+var real1, real2, real;
+var x_particle_start, x_particle, y_particle;
+var	X_delta = 100; // can be adjusted
+var Y_delta = 100; // can be adjusted
+var offset_x = 0;
+var offset_y = 0;
+
+// double slit variables
+var d_slits;   // distance between slits
+var w_slit;    // width of each slit
+var w_barrier; // thickness of screen
+var retsrc = Wave();	// retarded wave from source (src side)
+var retleft = Wave();	// retarded wave from left slit (dest side)
+var retright = Wave();	// retarded wave from right slit (dest side)
+var retdest = Wave();   // retarded wave from destination (dest side)
+var advsrc = Wave();    // advanced wave from source (src side)
+var advleft = Wave(); 	// advanced wave from left slit (src side)
+var advright = Wave(); 	// advanced wave from right slit (src side)
+var advdest = Wave();  	// advanced wave from destination (dest side)
+var x_src, y_src, x_dest, y_dest;
+var dx_src, dy_src, dx_dest, dy_dest;
+var x_left, y_left, d_left;
+var x_right, y_right, d_right;
+var t_retsrc, t_retleft, t_retright, t_retdest,t_adv_src, t_advleft, t_advright, t_advdest;
+var red, green, blue;
+var p_result = new Phasor();
+var x0_inspector, t0_inspector; // space coord. of inspector point when set at time t0_inspector
+var x_inspector, y_inspector;  // space coord. of inspector point
+var X_inspector, Y_inspector;  // screen coord. of inspector point
+var dX_inspector, dY_inspector;
+var r_inspector;
+var coherence_time, min_coherence_time, frequency;
+var sum = new waveSum();
+var half_w, half_h;
+var Lsrc_Float64, Lleft_Float64, Lright_Float64, Uleft_Float64, Uright_Float64, Udest_Float64;
+
+var P_mousedown = new Point2D();
+var P_mouseup = new Point2D();
+var prev_P_mouseup = new Point2D();
+
+var w_full, h_full;  //full width,height of client window and drawing frame
+var w = 0;
+var h = 0;
+var annotation_font="16pt cambria_math";
+//var annotation_color='white';
+
+var dragging_inspector = false;
+var setting_source = false;
+var setting_destination = false;
+var rotation; //degrees
+var gesture=false;
+var scale;
+var prev_scale;
+var theta;  //rotation in radians
+var prev_theta;  //previous rotation in radians
+var canvas_x = 0; //x location of canvas origin
+var canvas_y = 0; //y location of canvas origin
+var annotation_font="16pt cambria_math";
+var annotation_color='white';
+
+var controls;
+var dblslit_controls;
+var freeparticle_controls;
+var canvas;
+var context;
+var imageData, image_data, image_buffer, image_buffer_8, image_buffer_32;
+var upper_buffer, upper_buffer_8, upper_buffer_32;
+var lower_buffer, lower_buffer_8, lower_buffer_32;
+var blank_buffer, blank_buffer_8;
+
+var fps = 24;
+var msec_delay;
+
+function isEven(num) {return num % 2 == 0;}
+function isOdd(num) {return Math.abs(num % 2) == 1;}
+function inherit(id) {$i(id).style.visibility = 'inherit';}
+function hidden(id) {$i(id).style.visibility = 'hidden';}
+function On(id) {return ($i(id).checked && !$i(id).disabled);}
+
+function fillArc(x,y,r,start,end,color)
+{
+	// start: 0 radians is at 3 o'clock
+	// end: Math.PI radians is at 9 o'clock (half circle)
+
+	context.beginPath();
+	context.arc(x,y,r,start,end,true); // draw the arc counterclockwise
+	context.closePath(); // close the path to form a pie slice
+	context.fillStyle = color; // set fill color
+	context.fill(); // fill the arc
+}
+
+function fillCircle(x,y,r,color) {fillArc(x,y,r,0,2*Math.PI,color);}
+
+function show_speed()
+{
+	var v_value,u_value;
+
+	set('v_over_c',v.toPrecision(5));
+	v_value = v*c_value;
+	set('v',v_value.toFixed());
+	set('u_over_c',u.toPrecision(5));
+	u_value = u*c_value;
+	set('u',u_value.toFixed());
+	set('gamma',gamma.toPrecision(5));
+	document.querySelector('#speed_range').value = v*1000;
+}
+
+function x_to_X(x) // x to screen location X
+{
+  if (centered) return (x*scale - half_w);
+  else          return ((x - offset_x)*scale + half_w);
+}
+
+function X_to_x(X) // X screen location to x
+{
+  if (centered) return ((X - half_w)/scale);
+  else          return ((X - half_w)/scale + offset_x);
+}
+
+function y_to_Y(y) // y to screen location Y
+{
+  if (centered) return (half_h - y*scale);
+  else          return (half_h - (y - offset_y)*scale);
+}
+
+function Y_to_y(Y) // Y screen location to y
+{
+  if (centered) return (-(Y - half_h)/scale);
+  else          return (-(Y - half_h)/scale + offset_y);
+}
+
+function get_t()
+{
+  var badinput,user_input,time;
+  
+  badinput = true;
+  do
+  {
+    user_input = prompt("Enter time [s]",get('time'));
+    if (user_input == null) return(false); // user has canceled
+    else // user has entered something
+    {
+      if (isNaN(Number(user_input))) alert(user_input + " is not a number"); // not a number
+      else // is a number
+      {
+        time = Number(user_input); t = time*fps;
+        set('time',user_input);
+        badinput = false;
+      }
+    }
+  }
+  while(badinput);
+  return(true);
+}
+
+function get_v_over_c()
+{
+  var badinput,user_input,v_over_c;
+  
+  badinput = true;
+  do
+  {
+    user_input = prompt("Enter group velocity divided by the speed of light",v);
+    if (user_input == null) return(false); // user has canceled
+    else // user has entered something
+    {
+      if (isNaN(Number(user_input))) alert(user_input + " is not a number"); // not a number
+      else // is a number
+      {
+        v_over_c = Number(user_input);
+        if (v_over_c >= 1 || v_over_c < 0) alert("v/c must be between 0 and 1");
+        else // OK to use
+        {
+          v = v_over_c;
+          if (v == 0) {u = Infinity;} else {u = c*c/v;}
+          gamma = 1/Math.sqrt(1-(v*v)/(c*c)); 
+          show_speed();
+          badinput = false;
+        }
+      }
+    }
+  }
+  while(badinput);
+  return(true);
+}
+
+function get_v()
+{
+  var badinput,user_input,v_value;
+  
+  badinput = true;
+  do
+  {
+    user_input = prompt("Enter group velocity [m/s]",v*c_value);
+    if (user_input == null) return(false); // user has canceled
+    else // user has entered something
+    {
+      if (isNaN(Number(user_input))) alert(user_input + " is not a number"); // not a number
+      else // is a number
+      {
+        v_value = Number(user_input);
+        if (v_value < 0 || v_value > c_value) alert("v must be between 0 and " + c_value);
+        else // OK to use
+        {
+          v = v_value/c_value;
+          if (v == 0) {u = Infinity;} else {u = c*c/v;}
+          gamma = 1/Math.sqrt(1-(v*v)/(c*c)); 
+          show_speed();
+          badinput = false;
+        }
+      }
+    }
+  }
+  while(badinput);
+  return(true);
+}
+
+function get_u_over_c()
+{
+  var badinput,user_input,u_over_c;
+  
+  badinput = true;
+  do
+  {
+    user_input = prompt("Enter phase velocity divided c (> 1)",u);
+    if (user_input == null) return(false); // user has canceled
+    else // user has entered something
+    {
+      if (isNaN(Number(user_input))) alert(user_input + " is not a number"); // not a number
+      else // is a number
+      {
+        u_over_c = Number(user_input);
+        if (u_over_c <= 1) alert("u/c must be greater than 1");
+        else // OK to use
+        {
+          u = u_over_c; v = c*c/u;
+          gamma = 1/Math.sqrt(1-(v*v)/(c*c)); 
+          show_speed();
+          badinput = false;
+        }
+      }
+    }
+  }
+  while(badinput);
+  return(true);
+}
+
+function get_u()
+{
+  var badinput,user_input,u_value;
+  
+  badinput = true;
+  do
+  {
+    user_input = prompt("Enter phase velocity [m/s] (> c)",u*c_value);
+    if (user_input == null) return(false); // user has canceled
+    else // user has entered something
+    {
+      if (isNaN(Number(user_input))) alert(user_input + " is not a number"); // not a number
+      else // is a number
+      {
+        u_value = Number(user_input);
+        if (u_value <= c_value) alert("u must be greater than c");
+        else // OK to use
+        {
+          u = u_value/c_value; v = c*c/u;
+          gamma = 1/Math.sqrt(1-(v*v)/(c*c)); 
+          show_speed();
+          badinput = false;
+        }
+      }
+    }
+  }
+  while(badinput);
+  return(true);
+}
+
+function get_gamma()
+{
+  var badinput,user_input,gamma_value;
+
+  badinput = true;
+  do
+  {
+    user_input = prompt("Enter gamma (Lorentz factor >=1)",gamma);
+    if (user_input == null) return(false); // user has canceled
+    else // user has entered something
+    {
+      if (isNaN(Number(user_input))) alert(user_input + " is not a number");
+      else // is a number
+      {
+        gamma_value = Number(user_input);
+        if (gamma_value < 1) alert("gamma must be greater than or equal to 1");
+        else
+        {
+          gamma = gamma_value;
+          v = Math.sqrt(1-(1/gamma)*(1/gamma));
+          if (v == 0) {u = Infinity;} else {u = c*c/v;}
+          show_speed();
+          badinput = false;
+        }
+      }
+    }
+  }
+  while(badinput);
+  return(true);
+}
+
+function speed_change()
+{
+  var v_over_c;
+  
+  v_over_c = $i('speed_range').value/1000;
+  if (v_over_c == 1) {v_over_c = 0.999; $i('speed_range').value = v_over_c*100;}
+  v = v_over_c; gamma = 1/Math.sqrt(1-(v*v)/(c*c));
+  if (v == 0) {u = Infinity;} else {u = c*c/v;}
+  show_speed();
+  drawFrame();
+}
+
+function timeSpan()		{if (get_t()) 		drawFrame();}
+function gammaSpan()  	{if (get_gamma())	reset();}
+function v_over_cSpan()	{if (get_v_over_c())reset();}
+function vSpan()  		{if (get_v()) 		reset();}
+function u_over_cSpan() {if (get_u_over_c())reset();}
+function uSpan()  		{if (get_u()) 		reset();}
+function omegaSpan()	{if (get_omega())	drawFrame();}
+function freqSpan()		{if (get_freq())	drawFrame();}
+function periodSpan()	{if (get_period())	drawFrame();}
+function particleSpan()	{if (get_particle())drawFrame();}
+function massSpan()		{if (get_mass())	drawFrame();}
+function MeVSpan()		{if (get_MeV())		drawFrame();}
+
+function overlapDblSlit(x,y)
+{
+    var n;
+    
+    n = 0;
+    if (retsrc.hasValue(x,y)) n++;
+    if (retleft.hasValue(x,y)) n++;
+    if (retright.hasValue(x,y)) n++;
+    if (retdest.hasValue(x,y)) n++;
+    if (advsrc.hasValue(x,y)) n++;
+    if (advleft.hasValue(x,y)) n++;
+    if (advright.hasValue(x,y)) n++;
+    if (advdest.hasValue(x,y)) n++;
+    return (n > 1);
+}
+
+function overlapFree()
+{
+	return ((Math.abs(x_to_X(x_particle) - x_to_X(x_inspector)) <= X_delta) &&
+	 (Math.abs(y_to_Y(y_particle) - y_to_Y(y_inspector)) <= Y_delta));
+}
+
+function get(name) {return($i(name).innerHTML);}
+function set(name,value) {$i(name).innerHTML = value;}
+
+function drawLine(x1,y1,x2,y2,width,color)
+{
+	context.save();
+	context.strokeStyle = color;
+	context.lineWidth = width;
+	context.beginPath();
+	context.moveTo(x1,y1);
+	context.lineTo(x2,y2);
+	context.stroke();
+	context.restore();
+}
+
+function drawText(text,x,y,align,base,angle)
+{
+  context.save();
+  context.fillStyle = annotation_color;
+  context.font = annotation_font;
+  context.textAlign = align;
+  context.textBaseline = base;
+  context.translate(x,y);
+  context.rotate(angle);
+  context.fillText(text,0,0);
+  context.restore();
+}
+
+function drawFreeInspector()
+{
+	var x,y,dx,dy,dt_1,dt_2,t1,t2,x1,y1,x2,y2,r1,r2;
+	var cycle1,cycle2,phase1,phase2,real1,real2,real;
+
+    if (!inspector) {hidden('inspector'); return;}
+    else inherit('inspector');
+
+	context.save();
+	if (inspector_motion == 'stationary'  || v==0) {context.translate(x_to_X(x_inspector), y_to_Y(y_inspector));}
+	else if (inspector_motion == 'particle') {x_inspector = x0_inspector + v*(t - t0_inspector); context.translate(x_to_X(x_inspector), y_to_Y(y_inspector));}
+	else if (inspector_motion == 'de Broglie' && v!=0) {x_inspector = x0_inspector + (t - t0_inspector)/v; context.translate(x_to_X(x_inspector), y_to_Y(y_inspector));}
+	else return;
+/*	context.beginPath();
+	context.arc(0, 0, r_inspector, 0, 2*Math.PI, false);
+	context.clip();
+	context.fillStyle = 'rgba(255,255,255,0.20)';
+	context.fill();*/
+	drawLine(-r_inspector,0,r_inspector,0,1,'white');
+	drawLine(0,-r_inspector,0,r_inspector,1,'white');
+	context.restore();
+
+	context.save();
+	context.font = "times"
+	context.fillStyle = 'white';
+	context.textAlign = 'left';
+	context.textBaseline = 'top';
+	x = x_inspector; y = y_inspector;
+    if (overlapFree())
+    {	
+    	inherit('inspector');
+    	dx = x - x_particle; dy = y - y_particle;
+    	dt_1 = dt1(v,dx,dy); dt_2 = dt2(v,dx,dy);
+    	x1 = x_particle - v*dt_1; y1 = 0; // position of particle at event 1
+		x2 = x_particle + v*dt_2; y2 = 0; // position of particle at event 2
+		t1 = t - dt_1; // stationary time retarded wave left moving particle
+		t2 = t + dt_2; // stationary time advanced wave will leave moving particle
+		r1 = Math.sqrt((x-x1)*(x-x1) + dy*dy); // distance from retarded origin to inspector point
+		r2 = Math.sqrt((x-x2)*(x-x2) + dy*dy); // distance from advanced origin to inspector point
+		cycle1 = Math.floor(omega*(t1/gamma)/(2*Math.PI)); // adjusted to moving particle's slower clock
+		cycle2 = Math.floor(omega*(t2/gamma)/(2*Math.PI)); // adjusted to moving particle's slower clock
+		phase1 = omega*(t1/gamma) % (2*Math.PI); // adjusted to moving particle's slower clock
+		phase2 = omega*(t2/gamma) % (2*Math.PI); // adjusted to moving particle's slower clock
+		real1 = Math.sin(phase1)/2; real2 = -Math.sin(phase2)/2; // normalized to real values between -1 and 1
+		real = real1 + real2;
+
+		drawLine(x_to_X(x1),y_to_Y(y1),x_to_X(x_inspector), y_to_Y(y_inspector),3,'lime');
+		drawLine(x_to_X(x2),y_to_Y(y2),x_to_X(x_inspector), y_to_Y(y_inspector),3,'red');
+
+		set('dx',dx.toPrecision(3)); set('dy',dy.toPrecision(3));
+		set('x',x.toPrecision(3)); set('y',y.toPrecision(3));
+		set('dt1',dt_1.toPrecision(3)); set('dt2',dt_2.toPrecision(3));
+		set('t1',(t1/fps).toPrecision(5)); set('t2',(t2/fps).toPrecision(5));
+		set('x1',x1.toPrecision(4)); set('x2',x2.toPrecision(4));
+		set('r1',r1.toPrecision(4)); set('r2',r2.toPrecision(4));
+		set('cycle1',cycle1.toFixed()); set('cycle2',cycle2.toFixed());
+		set('phase1',phase1.toPrecision(3)); set('phase2',phase2.toPrecision(3));
+		set('real1',real1.toPrecision(3)); set('real2',real2.toPrecision(3));
+		set('real',real.toPrecision(3));
+    }
+    else {hidden('inspector');}
+    context.restore();
+}
+
+function drawDblSlitInspector()
+{
+    var overlap_at_inspector;
+    
+    if (!inspector) return;
+	context.save();
+	context.translate(X_inspector, Y_inspector);
+	context.beginPath();
+	context.arc(0, 0, r_inspector, 0, 2*Math.PI, false);
+	context.clip();
+	context.fillStyle = 'rgba(255,255,255,0.20)';
+	context.fill();
+	context.strokeStyle = 'black';
+	drawInspectorLine(-r_inspector,0,r_inspector,0);
+	drawInspectorLine(0,-r_inspector,0,r_inspector);
+	
+    overlap_at_inspector = overlapDblSlit(X_inspector, Y_inspector);
+    if ((overlap_at_inspector && overlap_only) || (!overlap_only))
+    {
+        sum.Re = 0; sum.Im = 0; sum.n = 0;
+        if (src_waves)  				{drawPhasor(retsrc,		X_inspector, Y_inspector, sum); drawPhasor(advsrc, X_inspector, Y_inspector, sum);}
+        if (src_waves && left_slit)  	{drawPhasor(retleft, 	X_inspector, Y_inspector, sum);}
+        if (dest_waves && left_slit)	{drawPhasor(advleft, 	X_inspector, Y_inspector, sum);}
+        if (src_waves && right_slit)  	{drawPhasor(retright, 	X_inspector, Y_inspector, sum);}
+        if (dest_waves && right_slit)	{drawPhasor(advright, 	X_inspector, Y_inspector, sum);}
+        if (dest_waves)					{drawPhasor(retdest, 	X_inspector, Y_inspector, sum); drawPhasor(advdest, X_inspector, Y_inspector, sum);}
+        context.lineWidth = 3;
+        context.strokeStyle = 'white';
+        drawInspectorLine(0, 0, sum.Re, -sum.Im);
+        context.restore();
+    
+        context.save();
+        context.translate(X_inspector, Y_inspector + r_inspector);
+        if (sum.n > 1)   				 drawSumText(Phasor.from_ReIm(sum.Re,sum.Im));
+        if (src_waves)  				{drawPhasorText(retsrc, 	X_inspector, Y_inspector); drawPhasorText(advsrc, X_inspector, Y_inspector);}
+        if (src_waves && left_slit)  	{drawPhasorText(retleft, 	X_inspector, Y_inspector);}
+        if (dest_waves && left_slit)	{drawPhasorText(advleft, 	X_inspector, Y_inspector);}
+        if (src_waves && right_slit)  	{drawPhasorText(retright, 	X_inspector, Y_inspector);}
+        if (dest_waves && right_slit)	{drawPhasorText(advright, 	X_inspector, Y_inspector);}
+        if (dest_waves)					{drawPhasorText(retdest, 	X_inspector, Y_inspector); drawPhasorText(advdest, X_inspector, Y_inspector);}
+    }
+    context.restore();
+}
+
+function drawPhasor(wave, x, y, sum)
+{
+    var phasor;
+	
+    if (wave.hasValue(x,y))
+    {
+        phasor = wave.value(x,y);
+        context.lineWidth = 2;
+        context.strokeStyle = "hsla(" + phaseHue(phasor.phase) + ",100%,50%,1.0)";
+        drawInspectorLine(sum.Re, -sum.Im, sum.Re + phasor.Re(), -(sum.Im + phasor.Im()));
+        sum.Re = sum.Re + phasor.Re(); sum.Im = sum.Im + phasor.Im();
+        sum.n = sum.n + 1;
+    }
+}
+
+function drawInspectorLine(x1,y1,x2,y2)
+{
+    context.beginPath();
+    context.moveTo(Math.round(50*x1),Math.round(50*y1));
+    context.lineTo(Math.round(50*x2),Math.round(50*y2));
+    context.stroke();
+}
+
+function drawSumText(sum_phasor)
+{
+    context.fillStyle = "hsla(" + phaseHue(sum_phasor.phase) + ",100%,50%,1.0)";
+    context.translate(0, 20);
+    context.font = annotation_font;
+    context.textAlign = 'center';
+    context.textBaseline = 'middle';
+    context.fillText("Sum:   " + sum_phasor + "   probability density = " + (sum_phasor.modulus*sum_phasor.modulus).toPrecision(5), 0, 0);
+}
+
+function drawPhasorText(wave, x, y)
+{
+    var id;
+    var p;
+    
+    if (wave.hasValue(x,y))
+    {
+        id = wave.id;
+        p = wave.value(x,y);
+        context.fillStyle = "hsla(" + phaseHue(p.phase) + ",100%,50%,1.0)";
+        context.translate(0, 20);
+        context.font = annotation_font;
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
+        context.fillText(id + ":  " + p, 0, 0);
+    }
+}
+
+function drawSlits()
+{
+    context.save();
+    context.fillStyle = 'rgb(100,100,100)';
+    context.fillRect(0, y_left - w_barrier/2, x_left - w_slit/2, w_barrier);  //left
+	if (!left_slit)  // close left slit
+	{
+		context.fillRect(x_left - w_slit/2, y_left - w_barrier/2, w_slit, w_barrier);
+	}
+	context.fillRect(x_left + w_slit/2, y_right - w_barrier/2, d_slits - w_slit, w_barrier);  //middle
+	if (!right_slit)  // close right slit
+	{
+		context.fillRect(x_right - w_slit/2, y_right - w_barrier/2, w_slit, w_barrier);
+	}
+    context.fillRect(x_right + w_slit/2, y_right - w_barrier/2, w - x_right - w_slit/2, w_barrier);  //right
+    context.restore();
+}
+
+function distance(x1,y1,x2,y2)
+{
+	//alert("x1,y1 = " + x1 + "," + y1 + "   x2,y2 = " + x2 + "," + y2 + "   d = " + Math.sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1)));
+	var dx, dy;
+	dx = x2 - x1;
+	dy = y2 - y1;
+	return(Math.sqrt((dx * dx) + (dy * dy)));
+}
+
+function HSLtoRGB(H, S, L)  // H : degrees 0 to 360    S, L, R, G, B : 0 to 1
+// sets red, green, blue global variables
+{
+	//alert("H = " + H + "   S = " + S + "   L = " + L);
+	var H_prime = H/60;
+	//alert("H_prime = " + H_prime);	
+	var C = (1 - Math.abs(2*L - 1)) * S;   // chroma
+	//alert("C = " + C);
+	var X = C * (1 - Math.abs(H_prime % 2 - 1));
+	//alert("H_prime % 2 = " + H_prime % 2);
+	//alert("X = " + X);
+	
+	var m = L - C/2;
+	//alert("H_prime = " + H_prime + "   C = " + C + "   X = " + X);
+	if		(H_prime < 0) 	{red = 0; green = 0; blue = 0; }
+	else if (H_prime < 1) 	{red = C; green = X; blue = 0; }
+	else if (H_prime < 2) 	{red = X; green = C; blue = 0; }
+	else if (H_prime < 3) 	{red = 0; green = C; blue = X; }
+	else if (H_prime < 4) 	{red = 0; green = X; blue = C; }
+	else if (H_prime < 5) 	{red = X; green = 0; blue = C; }
+	else if (H_prime < 6) 	{red = C; green = 0; blue = X; }
+	else 					{red = 0; green = 0; blue = 0; }
+	red = red + m;
+	green = green + m;
+	blue = blue + m;
+	//alert("red = " + red + "   green = " + green + "   blue = " + blue);
+}
+
+function rgbaMag(mag)
+{
+	var r, g, b, a, opacity;
+	
+	r = Math.floor(mag * 255);
+	g = Math.floor(mag * 255);
+	b = Math.floor(mag * 255);
+	opacity = 0.2;
+	a = opacity * 255;
+	return (a << 24) | (b << 16) | (g << 8) | r;
+}
+
+function rgbaPhasor(p)
+{
+	var r, g, b, a, opacity;
+	
+	HSLtoRGB(phaseHue(p.phase),1,0.5);
+	//alert("red = " + red + "   green = " + green + "   blue = " + blue);
+	r = Math.floor(red * 255);
+	g = Math.floor(green * 255);
+	b = Math.floor(blue * 255);
+	opacity = p.modulus;
+	if (opacity > 1) {a = 255; } else {a = opacity * 255; }
+	return (a << 24) | (b << 16) | (g << 8) | r;
+}
+
+function phaseHue(phase) // express hue as degrees 0 to 360
+{
+	var angle = (phase*180/Math.PI) % 360;
+	if (angle < 0) angle = 360 + angle;
+	return angle;
+}
+
+// add Phasor p to sum
+function sumPhasor(p)
+{
+	sum.Re = sum.Re + p.Re(); sum.Im = sum.Im + p.Im();
+	sum.n = sum.n + 1;
+}
+
+// calculate sum for a location above slits
+function upperSum(x,y)
+{
+	var k = y * w + x;
+	var d1 = Uleft_Float64[k];
+	var d2 = Uright_Float64[k];
+	var d3 = Udest_Float64[k];
+    
+	sum.Re = 0; sum.Im = 0; sum.n = 0;  // clear sum
+	if (retleft.onLightCone(d1)  && ret_waves && left_slit)		{sumPhasor(retleft.phasor(d1));}
+	if (retright.onLightCone(d2) && ret_waves && right_slit)	{sumPhasor(retright.phasor(d2));}
+	if (retdest.onLightCone(d3)  && ret_waves && dest_waves)	{sumPhasor(retdest.phasor(d3));}
+	if (advdest.onLightCone(d3)  && adv_waves && dest_waves)	{sumPhasor(advdest.phasor(d3));}
+	//alert(p_result + "  n = " + n);
+    if (overlap_only && sum.n == 1) return 0; else return sum.n; 
+}
+
+// calculate sum for a location below slits
+function lowerSum(x,y)
+{
+	var k = (y - half_h) * w + x;
+	var d1 = Lsrc_Float64[k];
+	var d2 = Lleft_Float64[k];
+	var d3 = Lright_Float64[k];
+    
+	sum.Re = 0; sum.Im = 0; sum.n = 0;
+	if (retsrc.onLightCone(d1) && ret_waves && src_waves)	{sumPhasor(retsrc.phasor(d1));}
+	if (advsrc.onLightCone(d1) && adv_waves && src_waves)	{sumPhasor(advsrc.phasor(d1));}
+	if (advleft.onLightCone(d2) && adv_waves && left_slit)	{sumPhasor(advleft.phasor(d2));}
+	if (advright.onLightCone(d3) && adv_waves && right_slit){sumPhasor(advright.phasor(d3));}
+	if (overlap_only && sum.n == 1) return 0; else return sum.n; 
+}
+
+// turn sum into rgba integer at location k
+function setBuffer(k)
+{
+	p_result.from_ReIm(sum.Re, sum.Im);
+	image_buffer_32[k] = rgbaPhasor(p_result);
+}
+
+function setUpperPattern(buffer_32)
+{
+	var k,x,y;
+	
+	k = 0;
+	for (y = 0; y < half_h; y++)
+	{
+		for (x = 0; x < w; x++)
+		{
+            buffer_32[k] = rgbaMag(Upattern(x,y));
+			k++;
+		}
+	}
+}
+
+function setLowerPattern(buffer_32)
+{
+	var k,x,y;
+	
+	k = 0;
+	for (y = half_h; y < h; y++)
+	{
+		for (x = 0; x < w; x++)
+		{
+            buffer_32[k] = rgbaMag(Lpattern(x,y));
+			k++;
+		}
+	}
+}
+
+function modulusSum(d_left, d_right)
+{
+    var delta_d, lambda, phase_left, phase_right;
+    var p_left, p_right, p_sum;
+    
+    delta_d = Math.abs(d_left - d_right);
+    lambda = 1/frequency;
+    phase_left = ((d_left % lambda)/lambda)*2*Math.PI;
+    phase_right = ((d_right % lambda)/lambda)*2*Math.PI;
+    p_left = new Phasor(0.5, phase_left);
+    p_right = new Phasor(0.5, phase_right);
+    p_sum = new Phasor.sum(p_left, p_right);
+    return (p_sum.modulus); 
+}
+
+function Upattern(x, y)
+{
+    var d_left, d_right;
+    
+    d_left =  distance(x_src,y_src,x_left,y_left) +   distance(x_left,y_left,x,y);
+    d_right = distance(x_src,y_src,x_right,y_right) + distance(x_right,y_right,x,y);
+    return (modulusSum(d_left, d_right)); 
+}
+
+function Lpattern(x, y)
+{
+    var d_left, d_right;
+    
+    d_left =  distance(x_dest,y_dest,x_left,y_left) +   distance(x_left,y_left,x,y);
+    d_right = distance(x_dest,y_dest,x_right,y_right) + distance(x_right,y_right,x,y);
+    return (modulusSum(d_left, d_right)); 
+}
+
+// draw pixels above slits to image buffer
+function drawUpper()
+{
+	var k,x,y;
+	
+	k = 0;
+	for (y = 0; y < half_h; y++)
+	{
+		for (x = 0; x < w; x++)
+		{
+			if (upperSum(x, y) > 0) setBuffer(k);
+			k++;
+		}
+	}
+}
+
+// draw pixels below slits to image buffer
+function drawLower()
+{
+	var k,x,y;
+	
+	k = w * half_h;
+	for (y = half_h; y < h; y++)
+	{
+		for (x = 0; x < w; x++)
+		{
+			if (lowerSum(x, y) > 0) setBuffer(k);
+			k++;
+		}
+	}
+}
+
+function drawDblSlitWaves()
+{
+    if (pattern && !dest_waves) image_buffer_8.set(upper_buffer_8);
+    else image_buffer_8.set(blank_buffer_8);
+    if (pattern && !src_waves) image_buffer_8.set(lower_buffer_8,w*half_h*4);
+    else image_buffer_8.set(blank_buffer_8, w*half_h*4);
+	drawUpper();                            // draw waves to image_buffer_8 above slits
+	drawLower();                            // draw waves to image_buffer_8 below slits
+	image_data.set(image_buffer_8);			// copy image_buffer_8 to image_data
+	context.putImageData(imageData, 0, 0);  // copy imageData to context pixels
+}
+
+function drawSrcDest()
+{
+	context.fillStyle = 'yellow';
+	context.fillRect(x_src-1,y_src-1,2,2);
+	context.fillRect(x_dest-1,y_dest-1,2,2);
+}
+
+function drawDblSlit()
+{
+    overlap_only = On("overlap_checkbox");
+    left_slit = On("left_slit_checkbox");
+    right_slit = On("right_slit_checkbox");
+    inspector = On("inspector_checkbox");
+    ret_waves = On("retarded_checkbox");
+    adv_waves = On("advanced_checkbox");
+    src_waves = On("source_waves_checkbox");
+    dest_waves = On("destination_waves_checkbox");
+    pattern = On("pattern_checkbox");
+	
+    drawDblSlitWaves();
+    drawSlits();
+    drawSrcDest();
+    drawDblSlitInspector();
+}
+
+function setAlpha(rgbaColorString, newAlpha)
+{
+  const parts = rgbaColorString.match(/\d+(\.\d+)?/g); // Extract numbers
+  if (parts && parts.length === 4)
+  {
+    const r = parts[0];
+    const g = parts[1];
+    const b = parts[2];
+    return `rgba(${r}, ${g}, ${b}, ${newAlpha})`;
+  }
+  return rgbaColorString; // Return original if format is incorrect
+}
+
+function dt1(v, dx, dy) {return (( v*dx + Math.sqrt((c*c-v*v)*(dy*dy) + c*c*dx*dx))/(c*c-v*v));}
+function dt2(v, dx, dy) {return ((-v*dx + Math.sqrt((c*c-v*v)*(dy*dy) + c*c*dx*dx))/(c*c-v*v));}
+
+function drawPixelPair(dx,dy) // particle moves parallel to x-axis
+{
+	var color;
+	var X,Y;
+
+	dt_1 = dt1(v, dx, dy); // t - t1
+	dt_2 = dt2(v, dx, dy); // t2 - t
+	x1 = x_particle - v*dt_1; // position of particle at event 1
+	x2 = x_particle + v*dt_2; // position of particle at event 2
+	t1 = t - dt_1; // stationary time retarded wave left moving particle
+	t2 = t + dt_2; // stationary time advanced wave will leave moving particle
+	phase1 = omega*(t1/gamma) % (2*Math.PI); // adjusted to moving particle's slower clock
+	phase2 = omega*(t2/gamma) % (2*Math.PI); // adjusted to moving particle's slower clock
+	real1 = Math.sin(phase1)/2; real2 = -Math.sin(phase2)/2; // normalized to real values between -1 and 1
+	if (ret_waves && adv_waves) {real = real1 + real2;}
+	else if (ret_waves && !adv_waves) {real = real1;}
+	else if (!ret_waves && adv_waves) {real = real2;}
+	//console.log("    t1=" & t1 & "    t2=" & t2 & "    phase1 =" & phase1 & "phase2=" & phase2 & "    real1=" & real1 & "    real2=" & real2 & "    real=" & real);
+	if (real >= 0) 	{color = "rgba(0,0,255,1)";}
+	else 			{color = "rgba(255,255,0,1)";}
+	context.fillStyle = setAlpha(color,Math.abs(real));
+	X = x_to_X(x_particle + dx); Y = y_to_Y(y_particle + dy);
+	context.fillRect(X,Y,1,1);
+	if (dy > 0) context.fillRect(X,y_to_Y(y_particle - dy),1,1);
+}
+
+function drawFreeWaves()
+{
+	var dx,dy;
+	var X_particle,Y_particle;
+	var X,Y;
+
+	X_particle = x_to_X(x_particle); Y_particle = y_to_Y(y_particle);
+	X = X_particle - X_delta;
+	while (X < X_particle + X_delta)
+	{
+		dx = X_to_x(X) - x_particle; 
+		Y = Y_particle - Y_delta; // positive dy is negative dY
+		while (Y <= Y_particle)
+		{
+			dy = Y_to_y(Y) - y_particle;
+			drawPixelPair(dx,dy); // both +dy and -dy are drawn
+			Y = Y + 1;
+		}
+		X = X + 1;
+	}
+}
+
+function drawFreeParticle() {fillCircle(x_to_X(x_particle),y_to_Y(y_particle),2,"white");}
+
+function drawFreeNotation()
+{
+	var dB_wavelength,dx1,dx2,u;
+	var dX1,dX2,X1,Y1,X2,Y2; // screen coord. (Y increases downward)
+
+	if (!notation) {return;}
+	X1 = x_to_X(x_particle); Y1 = y_to_Y(y_particle);
+	X2 = X1 + 150; Y2 = Y1 - 150;
+	drawLine(X1,Y1,X2,Y2,3,'white');
+	drawText("particle speed = v = " + v.toPrecision(3) + " c",X2,Y2,'left','middle',0);
+	drawText("particle frequency = mc\u00B2/(\u03B3h) = (Compton frequency)/\u03B3 = " + (1/gamma).toPrecision(3) + " Hz",X2,Y2+20,'left','middle',0);
+	if (v == 0)
+	{
+		drawLine(X1,Y1,X1,Y1+Y_delta+20,3,'white');
+		drawLine(X1+scale*fps,Y1,X1+scale*fps,Y1+Y_delta+20,3,'white');
+		drawText("Compton wavelength = h/(mc)",X1+scale*fps/2,Y1+Y_delta+25,'center','top');
+		drawText("Compton frequency = mc\u00B2/h",X1+scale*fps/2,Y1+Y_delta+45,'center','top');
+		drawText("speed of Compton wave = 0",X1+scale*fps/2,Y1+Y_delta+65,'center','top');
+		drawText("(retarded + advanced = standing Compton wave)",X1+scale*fps/2,Y1+Y_delta+85,'center','top');
+	}
+	else
+	{
+		u = c/v;
+		dB_wavelength = 1/(v*gamma); // relativistic de Broglie wavelength
+		dx2 = ((u-v)*t/fps + 3*dB_wavelength/4) % (dB_wavelength); dx1 = dB_wavelength - dx2;
+		dX1 = scale*dx1*fps; dX2 = scale*dx2*fps;
+		drawLine(X1-dX1,Y1+Y_delta,		X1-dX1,Y1+Y_delta+20,3,'white');
+		drawLine(X1-dX1,Y1+Y_delta+10,	X1+dX2,Y1+Y_delta+10,3,'white');
+		drawLine(X1+dX2,Y1+Y_delta,		X1+dX2,Y1+Y_delta+20,3,'white');
+		drawText("de Broglie wavelength = h/(\u03B3mv)",X1 + (dX2-dX1)/2,Y1+Y_delta+25,'center','top');
+		drawText("de Broglie frequency = \u03B3mc\u00B2/h",X1 + (dX2-dX1)/2,Y1+Y_delta+45,'center','top');
+		drawText("speed of de Broglie wave = c\u00B2/v = " + (1/v).toPrecision(3) + " c",X1 + (dX2-dX1)/2,Y1+Y_delta+65,'center','top');
+	}
+}
+
+function drawFree()
+{
+	var controls_visibility;
+
+	set('time',(t/fps).toPrecision(5));
+	inspector = On('free_inspector_checkbox');
+    ret_waves = On('retarded_checkbox');
+    adv_waves = On('advanced_checkbox');
+    notation = On('notation_checkbox');
+
+    x_particle = x_particle_start + v*t;
+    set('x_particle',x_particle.toPrecision(5)); set('y_particle',0);
+    canvas.width = w;  //clears the canvas
+  	canvas.height = h; //clears the canvas
+  	controls_visibility = $i('freeparticle_controls').style.visibility;
+    drawFreeWaves();
+    drawFreeParticle();
+    drawFreeInspector();
+    drawFreeNotation();
+    $i('freeparticle_controls').style.visibility = controls_visibility;
+}
+
+function drawFrame()
+{
+	if (mode == 'dblslit') drawDblSlit();
+	else if (mode == 'free') drawFree();
+}
+
+function animate()
+{
+    if (!paused) t = t + delta_t;
+    drawFrame();
+}
+
+// compute distances from source of wave (x0,y0) to all pixels above slits
+function upperDistances(x0, y0, upperarray)
+{
+	var x, y;
+	for (x = 0; x < w; x++)
+	{
+		for (y = 0; y < half_h; y++)
+		{
+			upperarray[y * w + x] = distance(x0, y0, x, y);
+		}
+	}
+}
+
+// compute distances from source of wave (x0,y0) to all pixels below slits
+function lowerDistances(x0, y0, lowerarray)
+{
+	var x, y;
+	for (x = 0; x < w; x++)
+	{
+		for (y = half_h; y < h; y++)
+		{
+			lowerarray[(y - half_h) * w + x] = distance(x0, y0, x, y);
+		}
+	}
+}
+
+function resize(init)
+{
+	var t_dest_left, t_dest_right;
+
+	//alert("resize");
+    w_full = Math.floor(document.documentElement.clientWidth);
+    h_full = Math.floor(document.documentElement.clientHeight);
+    if (isEven(w_full)) w = w_full; else w = w_full-1;
+    if (isEven(h_full)) h = h_full; else h = h_full-1;
+	
+	//starttext.width = w_full; starttext.height = h_full;
+    canvas.width = w;		//clears the canvas
+    canvas.height = h;		//clears the canvas
+	
+	//context.translate(w/2, h/2); 			//define origin of coordinate system to be in center of canvas
+	//context.translate(w/2, h/2);	//same origin as drawing context
+    
+    canvas_x = 0;
+    canvas_y = 0;
+	
+	half_w = Math.round(w/2);
+	half_h = Math.round(h/2);
+
+	// free particle info
+	x_particle_start = 0; y_particle = 0; //starting point for free particle
+
+    // double slit info
+	w_barrier = 4; w_slit = 4; d_slits = 100;
+	x_left =  Math.round(half_w - d_slits/2); y_left =  half_h;
+	x_right = Math.round(half_w + d_slits/2); y_right = half_h;
+    
+    if (init) {dX_inspector = 0; dY_inspector = 0;}
+    X_inspector = half_w + dX_inspector; Y_inspector = half_h + dY_inspector;
+    x_inspector = X_to_x(X_inspector); y_inspector = Y_to_y(Y_inspector);
+    
+    if (init) {dx_src = 100; dy_src = 100; dx_dest = -100; dy_dest = -100;}
+    x_src =  half_w + dx_src;  y_src =  half_h + dy_src;
+    x_dest = half_w + dx_dest; y_dest = half_h + dy_dest;
+
+    t_retsrc = 0;
+	t_retleft = distance(x_src, y_src, x_left, y_left);
+	t_retright = distance(x_src, y_src, x_right, y_right);
+	t_dest_left =  t_retleft +  distance(x_left,  y_left,  x_dest, y_dest);
+    t_dest_right = t_retright + distance(x_right, y_right, x_dest, y_dest);
+    coherence_time = min_coherence_time + Math.abs(t_dest_left - t_dest_right);
+    t_advsrc = coherence_time;
+    t_retdest = Math.max(t_dest_left,t_dest_right);
+    t_advdest= t_retdest + coherence_time;
+    t_advleft = t_retleft + coherence_time;
+    t_advright = t_retright + coherence_time;
+	
+	d_left =  t_retleft;
+	d_right = t_retright;
+    
+    imageData = context.getImageData(0, 0, w, h);				// imageData Object representing context pixels
+	image_data = imageData.data;								// Uint8ClampedArray representing a one-dimensional array of image data in RGBA order
+	image_buffer = new ArrayBuffer(image_data.length);			// ArrayBuffer with same number of bytes as image_data array
+	image_buffer_8 = new Uint8ClampedArray(image_buffer);		// Typed Array View of image_buffer as unsigned 8 bit integers (clamped to 0 through 255)
+	image_buffer_32 = new Uint32Array(image_buffer);			// Typed Array View of image_buffer as unsigned 32 bit integers
+    
+    blank_buffer = new ArrayBuffer(image_data.length/2);		// ArrayBuffer with half the number of bytes as image_data array
+	blank_buffer_8 = new Uint8ClampedArray(blank_buffer);	    // Typed Array View of blank_buffer as unsigned 8 bit integers (clamped to 0 through 255)
+    
+    upper_buffer = new ArrayBuffer(image_data.length/2);		// ArrayBuffer with half the number of bytes as image_data array
+	upper_buffer_8 = new Uint8ClampedArray(upper_buffer);	    // Typed Array View of upper_buffer as unsigned 8 bit integers (clamped to 0 through 255)
+	upper_buffer_32 = new Uint32Array(upper_buffer);		    // Typed Array View of upper_buffer as unsigned 32 bit integers
+    
+    lower_buffer = new ArrayBuffer(image_data.length/2);		// ArrayBuffer with half the number of bytes as image_data array
+	lower_buffer_8 = new Uint8ClampedArray(lower_buffer);	    // Typed Array View of lower_buffer as unsigned 8 bit integers (clamped to 0 through 255)
+	lower_buffer_32 = new Uint32Array(lower_buffer);		    // Typed Array View of lower_buffer as unsigned 32 bit integers
+    
+    setUpperPattern(upper_buffer_32);
+    setLowerPattern(lower_buffer_32);
+	
+    // function Wave(   waveid, 											retarded, 	src_side, 	t0, 		x0, 	y0, 		modulus0, 	phase0)
+	retsrc =   new Wave("Retarded Wave from Source", 						true, 		true, 		t_retsrc, 	x_src, 	y_src, 		0.5, 		0);
+    retleft =  new Wave("Retarded Wave from Source through Left Slit", 		true, 		false, 		t_retleft, 	x_left,	y_left, 	0.5, 		0);
+    retright = new Wave("Retarded Wave from Source through Right Slit", 	true, 		false, 		t_retright,	x_right,y_right,	0.5, 		0);
+	retdest =  new Wave("Retarded Wave from Destination", 					true, 		false, 		t_retdest, 	x_dest, y_dest, 	0.5, 		Math.PI);
+    advsrc =   new Wave("Advanced Wave from Source", 						false, 		true, 		t_advsrc, 	x_src, 	y_src, 		0.5, 		0);
+    advleft =  new Wave("Advanced Wave from Destination through Left Slit", false, 		true, 		t_advleft, 	x_left, y_left, 	0.5, 		0);
+    advright = new Wave("Advanced Wave from Destination through Right Slit",false, 		true, 		t_advright,	x_right,y_right, 	0.5, 		0);
+    advdest =  new Wave("Advanced Wave from Destination", 					false, 		false, 		t_advdest, 	x_dest, y_dest, 	0.5, 		Math.PI);
+
+    
+	// initialize distances
+	Lsrc = new ArrayBuffer(w * half_h * 8);
+	Lleft = new ArrayBuffer(w * half_h * 8);
+	Lright = new ArrayBuffer(w * half_h * 8);
+    Uleft = new ArrayBuffer(w * half_h * 8);
+	Uright = new ArrayBuffer(w * half_h * 8);
+	Udest = new ArrayBuffer(w * half_h * 8);
+
+	Lsrc_Float64 = new Float64Array(Lsrc);
+	Lleft_Float64 = new Float64Array(Lleft);
+    Lright_Float64 = new Float64Array(Lright);
+	Uleft_Float64 = new Float64Array(Uleft);
+	Uright_Float64 = new Float64Array(Uright);
+	Udest_Float64 = new Float64Array(Udest);
+
+	lowerDistances(x_src, y_src, Lsrc_Float64);
+	lowerDistances(x_left, y_left, Lleft_Float64);
+    lowerDistances(x_right, y_right, Lright_Float64);
+	upperDistances(x_left, y_left, Uleft_Float64);
+    upperDistances(x_right, y_right, Uright_Float64);
+	upperDistances(x_dest, y_dest, Udest_Float64);
+	
+    drawFrame();
+}
+
+function reset() {t = 0; delta_t = 1; t0_inspector = 0; x0_inspector = 0; if (paused) drawFrame();}
+
+function load()
+{
+	controls = $i('controls');
+	dblslit_controls = $i('dblslit_controls');
+    freeparticle_controls = $i('freeparticle_controls');
+	canvas = $i('canvas');
+	context = canvas.getContext('2d');
+	hidden('controls');
+    hidden('dblslit_controls');
+    hidden('freeparticle_controls');
+    hidden('canvas');
+    inherit('start_page');
+    started = false;
+}
+
+function exit()
+{
+	hidden('controls');
+    hidden('dblslit_controls');
+    hidden('freeparticle_controls');
+    hidden('canvas');
+    inherit('start_page');
+}
+
+function init()
+{
+	c = 1;
+	v = 0; set('v_over_c',"0"); set('v',"0");
+	u = c*c/v; set('u_over_c',"Infinity");
+  	gamma = 1; set('gamma',"1");
+  	omega = (2*Math.PI)/fps; // nominally one cycle (24 frames) per second
+  	scale = 1;
+  	delta_t = 1;
+  	t0_inspector = 0;
+
+  	document.querySelector('#speed_range').value = 0;
+
+	//context.beginPath();
+    //context.rect(0, 0, w, h);
+    //context.clip();  //no drawing outside canvas
+
+	P_mousedown.x = 0; P_mousedown.y = 0;
+    	
+	min_coherence_time = 30;
+	frequency = 0.1;
+
+	notation = false; $i('notation_checkbox').checked = false;
+	inspector = false; $i('inspector_checkbox').checked = false; $i('free_inspector_checkbox').checked = false;
+    pattern = false; $i('pattern_checkbox').checked = false;
+    ret_waves = true; $i('retarded_checkbox').checked = true;
+	adv_waves = true; $i('advanced_checkbox').checked = true;
+	left_slit = true; $i('left_slit_checkbox').checked = true;
+	right_slit = true; $i('right_slit_checkbox').checked = true;
+	src_waves = true; $i('source_waves_checkbox').checked = true;
+	dest_waves = true; $i('destination_waves_checkbox').checked = true;
+	inspector_motion = 'stationary'; $i('stationary_button').checked = true;
+	//mode = '';
+
+    //$i('arcs_checkbox').checked = false; $i('arcs_span').style.visibility = "hidden";
+    paused = false; $i("pause_resume_button").innerHTML="pause ";
+    hidden('single_steps');
+    hidden('set_srcdest');
+    $i('overlap_checkbox').checked = false;
+    hidden('single_steps');
+    $i('forward_button').checked = true;
+	//$i('scale_checkbox').checked = false; $i('rotate_checkbox').checked = false;
+    prev_P_mouseup.x = 0; prev_P_mouseup.y = 0;
+    //$i("real_button").checked = true;
+
+    resize(true);
+	reset();
+}
+
+function start(mode_setting)
+{
+    var animate_func = 'animate()';
+	msec_delay = 1000/fps;
+    init();
+	frame_timerID = setInterval(animate_func, msec_delay);
+	started = true;
+	mode = mode_setting;
+	if (mode == 'dblslit') r_inspector = 100;
+	else if (mode == 'free') r_inspector = 20;
+}
+
+var button_timer;
+function holdButtonOn(delay, action)
+{
+  var repeat = function () {action(); drawFrame(); button_timer = setTimeout(repeat, delay);};
+  repeat();
+}
+function holdButtonOff() {clearTimeout(button_timer);}
+
+//buttons
+
+function dblslitButton() 		{start('dblslit'); hidden('start_page'); inherit('canvas');}
+function freeButton() 			{start('free'); hidden('start_page'); inherit('canvas');}
+
+function pause_resumeButton()
+{
+    var animate_func = 'animate()';
+
+	paused = !paused;
+	if(paused) {clearInterval(frame_timerID); $i("pause_resume_button").innerHTML="resume"; inherit('single_steps'); inherit('set_srcdest');}
+	else {frame_timerID = setInterval(animate_func,msec_delay); $i("pause_resume_button").innerHTML="pause "; hidden('single_steps'); hidden('set_srcdest');}
+	drawFrame();
+}
+
+function forwardButton()  		{delta_t = Math.abs(delta_t);}
+function backwardButton() 		{delta_t = -Math.abs(delta_t);}
+function stationaryButton()		{inspector_motion = "stationary";}
+function particleButton()		{inspector_motion = "particle"; t0_inspector = t; x0_inspector = x_inspector;}
+function deBroglieButton()		{inspector_motion = "de Broglie"; t0_inspector = t; x0_inspector = x_inspector;}
+
+function fasterButton() 		{delta_t = delta_t*2;}
+function slowerButton() 		{delta_t = delta_t/2;}
+
+function sourceButton() 		{setting_source = true;}
+function destinationButton() 	{setting_destination = true;}
+
+function stepbackwardButton() 	{if (paused) {dt = delta_t; delta_t = -Math.abs(delta_t); paused = false; animate(); paused = true; delta_t = dt;}}
+function stepforwardButton()  	{if (paused) {dt = delta_t; delta_t = Math.abs(delta_t);  paused = false; animate(); paused = true; delta_t = dt;}}
+
+function stepbackward_down()	{holdButtonOn(200, stepbackwardButton);}
+function stepbackward_up()     	{holdButtonOff();}
+function stepforward_down()    	{holdButtonOn(200, stepforwardButton);}
+function stepforward_up()      	{holdButtonOff();}
+
+function zoom_out_down()       	{holdButtonOn(100, function() {scale = scale*0.99;});}
+function zoom_out_up()         	{prev_scale = scale; holdButtonOff();}
+function zoom_zero()           	{scale = 1; prev_scale = 1; drawFrame();}
+function zoom_in_down()        	{holdButtonOn(100, function() {scale = scale*1.01;});}
+function zoom_in_up()          	{prev_scale = scale; holdButtonOff();}
+
+function complexButton()		{complex = true;}
+function realButton()			{complex = false;}
+	
+// event handlers
+
+function control_input(target)
+{
+  return(target.type=='submit' || target.type=='button' || target.type=='checkbox' || target.type=='radio' || target.type=='range' || target.tagName=='SPAN');
+}
+
+function mouseClick()
+{
+    if (control_input(event.target)) return;
+    if (setting_source) {setting_source = false; return;}
+    if (setting_destination) {setting_destination = false; return;}
+    if ((P_mouseup.x == prev_P_mouseup.x) || (P_mouseup.y == prev_P_mouseup.y)) return;
+    if ((Math.abs(P_mouseup.x - P_mousedown.x) > 0) || (Math.abs(P_mouseup.y - P_mousedown.y) > 0)) return;
+    if (mode == 'dblslit')
+    {
+		if (controls.style.visibility=='hidden') {inherit('controls'); inherit('dblslit_controls');} else {hidden('controls'); hidden('dblslit_controls');}
+	}
+	else if (mode == 'free')
+	{
+		if (controls.style.visibility=='hidden') {inherit('freeparticle_controls'); inherit('controls');} else {hidden('controls'); hidden('freeparticle_controls');}
+	}
+	if (started) drawFrame();
+}
+
+function mouseDown(event)
+{
+	if (control_input(event.target)) return;
+    P_mousedown.x = event.pageX; P_mousedown.y = event.pageY;
+	dragging_inspector = inspector && (distance(x_to_X(x_inspector),y_to_Y(y_inspector), event.pageX,event.pageY) <= r_inspector) && (event.button==0);
+    if (setting_source &&      (event.pageY > half_h) && (event.button==0))
+    {
+        x_src = event.pageX; dx_src = x_src - half_w;
+        y_src = event.pageY; dy_src = y_src - half_h;
+        resize(false); reset(); drawFrame();
+    }
+    if (setting_destination && (event.pageY < half_h) && (event.button==0))
+    {
+        x_dest = event.pageX; dx_dest = x_dest - half_w;
+        y_dest = event.pageY; dy_dest = y_dest - half_h;
+        resize(false); reset(); drawFrame();
+    }
+}
+function mouseMove(event)
+{
+    if (control_input(event.target)) return;
+    if (dragging_inspector)
+    {
+        X_inspector = event.pageX; Y_inspector = event.pageY;
+        x_inspector = X_to_x(X_inspector); y_inspector = Y_to_y(Y_inspector);
+        dX_inspector = X_inspector - half_w;
+        dY_inspector = Y_inspector - half_h;
+        t0_inspector = t; x0_inspector = x_inspector;
+        drawFrame();
+    }
+}
+function mouseUp(event)
+{
+    if (control_input(event.target)) return;
+    P_mouseup.x = event.pageX; P_mouseup.y = event.pageY;
+    dragging_inspector = false;
+    if ((P_mouseup.x == P_mousedown.x) && (P_mouseup.y == P_mousedown.y) && !control_input(event.target))
+        {mouseClick(); prev_P_mouseup.x = 0; prev_P_mouseup.y = 0;}
+    else {prev_P_mouseup.x = P_mouseup.x; prev_P_mouseup.y = P_mouseup.y;}
+}
+
+function touchStart(event)
+{
+  if (event.target.type != "range") event.preventDefault();
+	if (buttonClick(event))
+	{
+		drawFrame();
+	}
+	else
+	{
+		event.button = 0;
+		mouseDown(event);
+	}
+}
+function touchMove(event)
+{
+  if (event.target.type != "range") event.preventDefault();
+  mouseMove(event);
+}
+function touchEnd(event)
+{
+  if (event.target.type != "range") event.preventDefault();
+  mouseUp(event);
+}
+
+function gestureStart(event) { if (started && event.target.id == 'canvas') gesture = true; }
+function gestureChange(event)
+{
+	if (started && gesture)
+	{
+		if (scaling_enabled) scale = prev_scale*event.scale;
+		if (rotation_enabled) { rotation = event.rotation; calcRotation(rotation*Math.PI/180); }
+		if (scaling_enabled || rotation_enabled) drawFrame();
+    event.preventDefault();
+	}
+}
+function gestureEnd() { if (started) {gesture = false; prev_scale = scale; prev_theta = theta; } }
+
+function targetType(event,value) { return(event.target.type == value || event.target.parentElement.type == value); }
+
+function is_touch_enabled()
+{
+    return ( 'ontouchstart' in window ) ||
+           ( navigator.maxTouchPoints > 0 ) ||
+           ( navigator.msMaxTouchPoints > 0 );
+}
+
+function buttonClick(event)
+{
+	if (is_touch_enabled())
+		return (event.type == "touchstart") && (targetType(event,"button") || targetType(event,"radio") || targetType(event,"checkbox"));
+	else
+		return (event.type == "click")      && (targetType(event,"button") || targetType(event,"radio") || targetType(event,"checkbox"));
+}
+
+function change() {drawFrame();}
+
+/*function zoom(key)
+{
+	if (!started || !paused) {return;}
+	if (key == "+" || key == "=") 		{scale = scale*1.01;}
+	else if (key == "-" || key == "_") 	{scale = scale*0.99;}
+	drawFrame();
+}*/
+
+function arrow(dX,dY) // move Inspector one pixel in X,Y coord
+{
+	if (inspector) {X_inspector = X_inspector + dX; Y_inspector = Y_inspector + dY;}
+	drawFrame();
+}
+
+// capture:false means use bubble up, passive:false means allow preventDefault
+
+canvas = $i('canvas');
+canvas.addEventListener("gesturestart",    gestureStart,   {capture:false, passive:false});
+canvas.addEventListener("gesturechange",   gestureChange,  {capture:false, passive:false});
+canvas.addEventListener("gestureend",      gestureEnd,     {capture:false, passive:false});
+canvas.addEventListener("touchstart",      touchStart,     {capture:false, passive:false});
+canvas.addEventListener("touchmove",       touchMove,      {capture:false, passive:false});
+canvas.addEventListener("touchend",        touchEnd,       {capture:false, passive:false});
+canvas.addEventListener("mousedown",       mouseDown,      {capture:false, passive:false});
+canvas.addEventListener("mousemove",       mouseMove,      {capture:false, passive:false});
+canvas.addEventListener("mouseup",         mouseUp,        {capture:false, passive:false});
+
+controls = $i('controls');
+controls.addEventListener("change",		change,         {capture:false, passive:false});
+controls.addEventListener("touchstart", touchStart,     {capture:false, passive:false});
+controls.addEventListener("touchmove",  touchMove,      {capture:false, passive:false});
+controls.addEventListener("touchend",   touchEnd,       {capture:false, passive:false});
+controls.addEventListener("mousedown",  mouseDown,      {capture:false, passive:false});
+controls.addEventListener("mousemove",  mouseMove,      {capture:false, passive:false});
+controls.addEventListener("mouseup",    mouseUp,        {capture:false, passive:false});
+
+document.addEventListener("keydown", function(e)
+{
+/*  if (e.ctrlKey || e.metaKey) // Check for Ctrl (Windows) or Command (Mac) key
+  {
+    const zoomKeys = ["+", "-", "_", "="]; // keys associated with zoom
+    if (zoomKeys.includes(e.key)) {e.preventDefault(); zoom(e.key);}
+  }*/
+  if (e.key == "ArrowRight")		{arrow(1,0);}
+  else if (e.key == "ArrowLeft") 	{arrow(-1,0);}
+  else if (e.key == "ArrowUp") 		{arrow(0,-1);}
+  else if (e.key == "ArrowDown") 	{arrow(0,1);}
+});
+
+function toggleCheckbox(event)
+{
+  var node;
+  var count;
+  if (event.target.nodeName == "SPAN")
+  {
+    count = event.currentTarget.childElementCount;
+    for (let i = 0; i < count; i++)
+    {
+      node = event.currentTarget.childNodes[i];
+      if (node.nodeName == "INPUT") {node.checked = !node.checked; drawFrame(); return;}
+    }
+  }
+  else drawFrame();
+}
+
+// ranges
+$i('speed_range').addEventListener("input", speed_change);
+
+function eventListeners(down,out,up)
+{
+	// radio input
+	$i('forward_radio').addEventListener(up,        	forwardButton);
+	$i('backward_radio').addEventListener(up,       	backwardButton);
+	$i('stationary_radio').addEventListener(up,			stationaryButton);
+	$i('particle_radio').addEventListener(up,       	particleButton);
+	$i('de_Broglie_radio').addEventListener(up,			deBroglieButton);
+
+	// spans
+	$i('time_span').addEventListener(up,      			timeSpan);
+	$i('v_over_c_span').addEventListener(up,      		v_over_cSpan);
+	$i('v_span').addEventListener(up,      				vSpan);
+	$i('u_over_c_span').addEventListener(up,      		u_over_cSpan);
+	$i('u_span').addEventListener(up,      				uSpan);
+	$i('gamma_span').addEventListener(up,      			gammaSpan);
+  
+  	// checkboxes as firstChild
+  	$i('notation_checkbox').addEventListener(up,        toggleCheckbox);
+	$i('retarded_checkbox').addEventListener(up,		toggleCheckbox);
+	$i('advanced_checkbox').addEventListener(up,		toggleCheckbox);
+
+	// buttons
+	$i('source_button').addEventListener(up,			sourceButton);
+	$i('destination_button').addEventListener(up,		destinationButton);
+	//$i('complex_button').addEventListener(up,			complexButton);
+	//$i('real_button').addEventListener(up,				realButton);
+	//$i('dblslit_button').addEventListener(up,		 	dblslitButton);
+	$i('free_button').addEventListener(up,				freeButton);
+	$i('zoom_out_button').addEventListener(down,      	zoom_out_down);
+	$i('zoom_out_button').addEventListener(out,       	zoom_out_up);
+	$i('zoom_out_button').addEventListener(up,        	zoom_out_up);
+	$i('zoom_zero_button').addEventListener(up,       	zoom_zero);
+	$i('zoom_in_button').addEventListener(down,       	zoom_in_down);
+	$i('zoom_in_button').addEventListener(out,        	zoom_in_up);
+	$i('zoom_in_button').addEventListener(up,         	zoom_in_up);
+	$i('slower_button').addEventListener(up,          	slowerButton);
+	$i('faster_button').addEventListener(up,          	fasterButton);
+	$i('reset_button').addEventListener(up,           	reset);
+	$i('exit_button').addEventListener(up,            	exit);
+	$i('pause_resume_button').addEventListener(up,    	pause_resumeButton);
+	$i('stepbackward_button').addEventListener(down,	stepbackward_down);
+	$i('stepbackward_button').addEventListener(out,   	stepbackward_up);
+	$i('stepbackward_button').addEventListener(up,    	stepbackward_up);
+	$i('stepforward_button').addEventListener(down,   	stepforward_down);
+	$i('stepforward_button').addEventListener(out,    	stepforward_up);
+	$i('stepforward_button').addEventListener(up,     	stepforward_up);
+	/*$i('return_to_start').addEventListener(up,        return_to_start);
+	$i('start_button').addEventListener(up,           start);
+	$i('description_button').addEventListener(up,     description);
+	$i('FAQ_button').addEventListener(up,             FAQ);
+	$i('UI_button').addEventListener(up,              UI);*/
+}
+
+if ('onpointerdown' in window) eventListeners("pointerdown","pointerout","pointerup");
+else if ('ontouchstart' in window) eventListeners("touchstart","touchmove","touchend");
+else eventListeners("mousedown","mouseout","mouseup");
+
+        </script>
+    </body>
+</html>
