@@ -63,7 +63,7 @@
 	            <button id="source_button" type="button">set source</button>
 	            <button id="destination_button" type="button">set destination</button><br>
 	            </span>
-	           	<input id="inspector_checkbox" type="checkbox">inspector<br>
+	           	<span title="wave details [drag crosshairs to any wave location" id="dblslit_inspector"><input id="inspector_checkbox" type="checkbox">inspector</span><br>
 	        </div>
         
 	        <div id="freeparticle_controls" style="background-color:rgba(0,0,0,0); margin-top:auto; margin-bottom:auto; position:absolute; color:rgb(255,255,255); font-family:times; z-index:3; visibility:hidden;">
@@ -92,7 +92,7 @@
         		<button title="Zoom Out" id="zoom_out_button" style="font-weight:bold; text-align:center; padding:0px; width:30px;">-</button>
         		<button title="Undo Zooming" id="zoom_zero_button" style="font-weight:bold; text-align:center; padding:0px; width:30px;">0</button>
         		<button title="Zoom In" id="zoom_in_button" style="font-weight:bold; text-align:center; padding:0px; width:30px;">+</button><br>
-	          	<span title="wave details [drag crosshairs to any wave location]"><input id="free_inspector_checkbox" type="checkbox">inspector</span><br>
+	          	<span title="wave details [drag crosshairs to any wave location]" id="free_inspector"><input id="free_inspector_checkbox" type="checkbox">inspector</span><br>
 	          	<div id="inspector" style="background-color:rgba(0,0,0,0); margin-top:auto; margin-bottom:auto; position:absolute; color:rgb(255,255,255); font-family:times; z-index:3; visibility:hidden;">
 	          		<span id="stationary_radio" title="stay stationary at speed v = 0"><input id="stationary_button" type="radio" name="inspector_motion">stationary</span><br>
             		<span id="particle_radio" title="move with particle at speed v"><input id="group_button" type="radio" name="inspector_motion">move with particle</span><br>
@@ -1882,6 +1882,8 @@ function eventListeners(down,out,up)
   	$i('notation').addEventListener(up,        			toggleCheckbox);
 	$i('retarded').addEventListener(up,					toggleCheckbox);
 	$i('advanced').addEventListener(up,					toggleCheckbox);
+	$i('dblslit_inspector').addEventListener(up,		toggleCheckbox);
+	$i('free_inspector').addEventListener(up,			toggleCheckbox);
 
 	// buttons
 	$i('source_button').addEventListener(up,			sourceButton);
