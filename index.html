@@ -32,14 +32,14 @@
 
         <div id="controls" style="background-color:rgba(0,0,0,0); margin-top:auto; margin-bottom:auto; position:absolute; color:rgb(255,255,255); font-family:times; z-index:3; visibility:hidden;">
             <button id="exit_button" type="button">exit</button>&nbsp;&nbsp;&nbsp;
-            <span title="show annotation"><input id="notation_checkbox" type="checkbox">notation</span>&nbsp;&nbsp;&nbsp;
+            <span title="show annotation" id="notation"><input id="notation_checkbox" type="checkbox">notation</span>&nbsp;&nbsp;&nbsp;
             <span id="time_span" title="time of stationary frame&#013;[Click to change value]" style="padding:0px;">t = <span id="time">0</span> s</span><br>
             <span title="animation direction in time">time direction:
             <span id="backward_radio" title="animate backward in time"><input id="backward_button" type="radio" name="time_direction">backward</span>
             <span id="forward_radio" title="animate forward in time"><input id="forward_button" type="radio" name="time_direction">forward</span>
         	</span><br>
-            <span title="show forward-in-time waves"><input  id="retarded_checkbox" type="checkbox">retarded waves</span>
-			<span title="show backward-in-time waves"><input id="advanced_checkbox" type="checkbox">advanced waves</span><br>
+            <span title="show forward-in-time waves"  id="retarded"><input id="retarded_checkbox" type="checkbox">retarded waves</span>
+			<span title="show backward-in-time waves" id="advanced"><input id="advanced_checkbox" type="checkbox">advanced waves</span><br>
             <button id="faster_button" type="button" title="increase animation rate x2">faster</button>
             <button id="slower_button" type="button" title="decrease animation rate x2">slower</button>
             <button id="pause_resume_button" type="button" title="pause/resume animation">pause </button>
@@ -1879,9 +1879,9 @@ function eventListeners(down,out,up)
 	$i('gamma_span').addEventListener(up,      			gammaSpan);
   
   	// checkboxes as firstChild
-  	$i('notation_checkbox').addEventListener(up,        toggleCheckbox);
-	$i('retarded_checkbox').addEventListener(up,		toggleCheckbox);
-	$i('advanced_checkbox').addEventListener(up,		toggleCheckbox);
+  	$i('notation').addEventListener(up,        			toggleCheckbox);
+	$i('retarded').addEventListener(up,					toggleCheckbox);
+	$i('advanced').addEventListener(up,					toggleCheckbox);
 
 	// buttons
 	$i('source_button').addEventListener(up,			sourceButton);
