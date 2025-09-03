@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Quantum</title>
+        <title>Matter Waves</title>
 
         <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
-        <meta name="description" content="Quantum">
+        <meta name="description" content="Matter Waves">
         <meta name="author" content="joekahr@gmail.com">
         <meta name="generator" content="J. Kahr">
-        <meta name="version" content="6.3">
+        <meta name="version" content="6.4">
         <meta name="viewport" content="width=device-width,user-scalable=0,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0">
 	
         <style type="text/css">
@@ -27,13 +27,13 @@
 			<button id="dblslit_button" type="button" style="text-align:center; background-color:rgb(0,255,0);">Light Waves</button>
 			<br> -->
 			<br>
-			<button id="free_button" type="button" style="text-align:center; background-color:rgb(0,255,0);">Matter Waves</button>
+			<button id="free_button" type="button" style="text-align:center; background-color:rgb(0,255,0);">Free Particle</button>
         </div>
 
         <div id="controls" style="background-color:rgba(0,0,0,0); margin-top:auto; margin-bottom:auto; position:absolute; color:rgb(255,255,255); font-family:times; z-index:3; visibility:hidden;">
             <button id="exit_button" type="button">exit</button>&nbsp;&nbsp;&nbsp;
             <span title="show annotation" id="notation"><input id="notation_checkbox" type="checkbox">notation</span>&nbsp;&nbsp;&nbsp;
-            <span id="time_span" title="time of stationary frame&#013;[Click to change value]" style="padding:0px;">t = <span id="time">0</span> s</span><br>
+            <span id="time_span" title="current time&#013;[Click to change value]" style="padding:0px;">t = <span id="time">0</span></span><br>
             <span title="animation direction in time">time direction:
             <span id="backward_radio" title="animate backward in time"><input id="backward_button" type="radio" name="time_direction">backward</span>
             <span id="forward_radio" title="animate forward in time"><input id="forward_button" type="radio" name="time_direction">forward</span>
@@ -92,51 +92,72 @@
         		<button title="Zoom Out" id="zoom_out_button" style="font-weight:bold; text-align:center; padding:0px; width:30px;">-</button>
         		<button title="Undo Zooming" id="zoom_zero_button" style="font-weight:bold; text-align:center; padding:0px; width:30px;">0</button>
         		<button title="Zoom In" id="zoom_in_button" style="font-weight:bold; text-align:center; padding:0px; width:30px;">+</button><br>
-	          	<span title="wave details [drag crosshairs to any wave location]" id="free_inspector"><input id="free_inspector_checkbox" type="checkbox">inspector</span><br>
-	          	<div id="inspector" style="background-color:rgba(0,0,0,0); margin-top:auto; margin-bottom:auto; position:absolute; color:rgb(255,255,255); font-family:times; z-index:3; visibility:hidden;">
-	          		<span id="stationary_radio" title="stay stationary at speed v = 0"><input id="stationary_button" type="radio" name="inspector_motion">stationary</span><br>
-            		<span id="particle_radio" title="move with particle at speed v"><input id="group_button" type="radio" name="inspector_motion">move with particle</span><br>
-            		<span id="de_Broglie_radio" title="move with de Broglie wave at speed c&sup2;/v"><input id="phase_button" type="radio" name="inspector_motion">move with de Broglie wave</span><br>
+	          	<span title="wave details [drag crosshairs to a wave or particle location]">inspect: </span>
+		        <span id="point_inspector" title="inspect a point"><input id="point_inspector_checkbox" type="checkbox">point</span>
+		        <span id="particle_inspector" title="inspect the particle"><input id="particle_inspector_checkbox" type="checkbox">particle</span><br>
+	          	<span id="inspector" style="background-color:rgba(0,0,0,0); margin-top:auto; margin-bottom:auto; position:absolute; color:rgb(255,255,255); font-family:times; z-index:3; visibility:hidden;">
+	          		<span id="stationary_radio" title="inspection point stays stationary"><input id="stationary_button" type="radio" name="inspector_motion">stationary</span><br>
+            		<span id="particle_radio" title="inspection point moves with particle at group velocity v"><input id="group_button" type="radio" name="inspector_motion">move at group velocity</span><br>
+            		<span id="de_Broglie_radio" title="inspection point moves with de Broglie wave at phase velocity c&sup2;/v"><input id="phase_button" type="radio" name="inspector_motion">move at phase velocity</span><br>
 	          		&nbsp;&nbsp;&nbsp;[c = h = m = f = 1]<br>
-	          		<span title="particle location">particle: ( 
-		          		<span id="x_particle" title="x coordinate of particle">0</span>&nbsp;, 
-		          		<span id="y_particle" title="y coordinate of particle">0</span></span> )<br>
-	        		<span title="location of inspection point">inspector:
-		        		x = <span id="x" title="x coordinate of inspection point">0</span>&nbsp;&nbsp;
-		        		y = <span id="y" title="y coordinate of inspection point">0</span></span><br>
-	        		<span title="x distance from particle to inspection point">dx = <span id="dx">0</span></span>&nbsp;&nbsp;&nbsp;
-	        		<span title="y distance from particle to inspection point">dy = <span id="dy">0</span></span><br>
-	        		<span title="sum of real amplitudes of retarded and advanced waves">amplitude sum = <span id="real">0</span></span><br>
-	        		<table>
-	        			<tr title="waves arriving at inspection point from both time directions"><td>wave</td>
-	        				<td title="forward-in-time wave" style="color:lime">retarded</td>
-	        				<td title="backward-in-time wave" style="color:red">advanced</td></tr>
-	        			<tr title="distances from wave origins to inspection point"><td>r</td>
-	        				<td id="r1" title="distance from retarded wave origin to inspection point">0</td>
-	        				<td id="r2" title="distance from advanced wave origin to inspection point">0</td></tr>       				
-	        			<tr title="delta x distances"><td>dx</td>
-	        				<td id="dx1" title="x distance from retarded wave origin to inspection point">0</td>
-	        				<td id="dx2" title="x distance from advanced wave origin to inspection point">0</td></tr>
-	        			<tr title="x location of wave origins"><td>x</td>
-	        				<td id="x1" title="x location of retarded wave origin">0</td>
-	        				<td id="x2" title="x location of advanced wave origin">0</td></tr>
-	        			<tr title="delta times"><td>dt</td>
-	        				<td id="dt1" title="time since retarded wave origin">0</td>
-	        				<td id="dt2" title="time until advanced wave origin">0</td></tr>
-	        			<tr title="time waves leave origins"><td>t</td>
-	        				<td id="t1" title="time of retarded wave origin">0</td>
-	        				<td id="t2" title="time of advanced wave origin">0</td></tr>
-	        			<tr title="cycles of waves"><td>cycle</td>
-	        				<td id="cycle1" title="cycle of retarded wave">0</td>
-	        				<td id="cycle2" title="cycle of advanced wave">0</td></tr>
-	        			<tr title="phases of waves"><td>phase</td>
-	        				<td id="phase1" title="phase of retarded wave [radians]">0</td>
-	        				<td id="phase2" title="phase of advanced wave [radians]">0</td></tr>
-	        			<tr title="real amplitudes of waves"><td>amplitude</td>
-	        				<td id="real1" title="real amplitude of retarded wave">0</td>
-	        				<td id="real2" title="real amplitude of advanced wave">0</td></tr>
-	        		</table>
-        		</div>
+	          		<span title="particle location">particle: 
+		          		x = <span id="x_particle" title="x coordinate of particle">0</span>&nbsp;&nbsp;
+		          		y = <span id="y_particle" title="y coordinate of particle">0</span></span><br>
+	        		<span id="point_inspection">
+		        		<span title="location of inspection point">inspector:
+			        		x = <span id="x" title="x coordinate of inspection point">0</span>&nbsp;&nbsp;
+			        		y = <span id="y" title="y coordinate of inspection point">0</span></span><br>
+		        		<span title="x distance from particle to inspection point">dx = <span id="dx">0</span></span>&nbsp;&nbsp;&nbsp;
+		        		<span title="y distance from particle to inspection point">dy = <span id="dy">0</span></span><br>
+		        		<span title="sum of real amplitudes of retarded and advanced waves">amplitude sum = <span id="real">0</span></span><br>
+		        		<table>
+		        			<tr title="waves arriving at inspection point from both time directions"><td>wave</td>
+		        				<td title="forward-in-time wave" style="color:lime">retarded</td>
+		        				<td title="backward-in-time wave" style="color:red">advanced</td></tr>
+		        			<tr title="distances from wave origins to inspection point"><td>r origin</td>
+		        				<td id="r1" title="distance from retarded wave origin to inspection point">0</td>
+		        				<td id="r2" title="distance from advanced wave origin to inspection point">0</td></tr>       				
+		        			<tr title="delta x distances"><td>dx</td>
+		        				<td id="dx1" title="x distance from retarded wave origin to inspection point">0</td>
+		        				<td id="dx2" title="x distance from advanced wave origin to inspection point">0</td></tr>
+		        			<tr title="x location of wave origins"><td>x origin</td>
+		        				<td id="x1" title="x location of retarded wave origin">0</td>
+		        				<td id="x2" title="x location of advanced wave origin">0</td></tr>
+		        			<tr title="delta times"><td>dt</td>
+		        				<td id="dt1" title="time since retarded wave origin">0</td>
+		        				<td id="dt2" title="time until advanced wave origin">0</td></tr>
+		        			<tr title="time waves leave origins"><td>t origin</td>
+		        				<td id="t1" title="time of retarded wave origin">0</td>
+		        				<td id="t2" title="time of advanced wave origin">0</td></tr>
+		        			<tr title="cycles of waves"><td>cycle</td>
+		        				<td id="cycle1" title="cycle of retarded wave">0</td>
+		        				<td id="cycle2" title="cycle of advanced wave">0</td></tr>
+		        			<tr title="phases of waves"><td>phase</td>
+		        				<td id="phase1" title="phase of retarded wave [radians]">0</td>
+		        				<td id="phase2" title="phase of advanced wave [radians]">0</td></tr>
+		        			<tr title="real amplitudes of waves"><td>amplitude</td>
+		        				<td id="real1" title="real amplitude of retarded wave">0</td>
+		        				<td id="real2" title="real amplitude of advanced wave">0</td></tr>
+		        		</table>
+	        		</span>
+	        		<span id="particle_inspection">
+	        			<span id="particle_time" title="time particle is at this location">t = <span id="t_part">0</span></span><br>
+		        		<table>
+		        			<tr title="waves leaving particle in both time directions"><td>wave</td>
+		        				<td title="forward-in-time wave" style="color:lime">retarded</td>
+		        				<td title="backward-in-time wave" style="color:red">advanced</td></tr>     				
+		        			<tr title="cycles of waves"><td>cycle</td>
+		        				<td id="cycle1_part" title="cycle of retarded wave">0</td>
+		        				<td id="cycle2_part" title="cycle of advanced wave">0</td></tr>
+		        			<tr title="phases of waves"><td>phase</td>
+		        				<td id="phase1_part" title="phase of retarded wave [radians]">0</td>
+		        				<td id="phase2_part" title="phase of advanced wave [radians]">0</td></tr>
+		        			<tr title="real amplitudes of waves"><td>amplitude</td>
+		        				<td id="real1_part" title="real amplitude of retarded wave">0</td>
+		        				<td id="real2_part" title="real amplitude of advanced wave">0</td></tr>
+		        		</table>
+	        		</span>
+        		</span>
 
 	        </div>
 
@@ -439,7 +460,7 @@ Point2D.distance = function(P1, P2) {return distance(P1.x, P1.y, P2.x, P2.y); };
 
 var frame_timerID;  //interval timer ID
 var started=false;
-var inspector, ret_waves, adv_waves, src_waves, dest_waves, left_slit, right_slit, paused, overlap_only, notation;  // checkbox toggles
+var point_inspector, particle_inspector, ret_waves, adv_waves, src_waves, dest_waves, left_slit, right_slit, paused, overlap_only, notation;  // checkbox toggles
 var inspector_motion; // 'stationary' or 'particle' or 'de Broglie'
 var t,delta_t; // t is proportional to time in seconds (actual time = t/fps)
 var v,u,c,gamma;
@@ -839,15 +860,19 @@ function drawFreeInspector()
 {
 	var x,y,dx,dy,dt_1,dt_2,t1,t2,x1,y1,x2,y2,r1,r2;
 	var cycle1,cycle2,phase1,phase2,real1,real2,real;
-
-    if (!inspector) {hidden('inspector'); return;}
-    else inherit('inspector');
+	var t_particle,Y;
 
 	context.save();
-	if (inspector_motion == 'stationary'  || v==0) {context.translate(x_to_X(x_inspector), y_to_Y(y_inspector));}
-	else if (inspector_motion == 'particle') {x_inspector = x0_inspector + v*(t - t0_inspector); context.translate(x_to_X(x_inspector), y_to_Y(y_inspector));}
-	else if (inspector_motion == 'de Broglie' && v!=0) {x_inspector = x0_inspector + (t - t0_inspector)/v; context.translate(x_to_X(x_inspector), y_to_Y(y_inspector));}
+
+	if (v == 0 && particle_inspector) {x_inspector = x_particle; y_inspector = y_particle; X_inspector = x_to_X(x_inspector); Y_inspector = y_to_Y(x_inspector);}
+	if 		(point_inspector) 		{Y = y_to_Y(y_inspector); inherit('inspector');}
+	else if (particle_inspector) 	{Y = y_to_Y(0); Y_inspector = Y; y_inspector = 0; inherit('inspector');}
+	else 							{hidden('inspector'); return;}
+	if 		(inspector_motion == 'stationary'  || v==0) {context.translate(x_to_X(x_inspector), Y);}
+	else if (inspector_motion == 'particle') 			{x_inspector = x0_inspector + v*(t - t0_inspector); context.translate(x_to_X(x_inspector), Y);}
+	else if (inspector_motion == 'de Broglie' && v!=0) 	{x_inspector = x0_inspector + (t - t0_inspector)/v; context.translate(x_to_X(x_inspector), Y);}
 	else return;
+
 /*	context.beginPath();
 	context.arc(0, 0, r_inspector, 0, 2*Math.PI, false);
 	context.clip();
@@ -863,9 +888,10 @@ function drawFreeInspector()
 	context.textAlign = 'left';
 	context.textBaseline = 'top';
 	x = x_inspector; y = y_inspector;
-    if (overlapFree())
+    if (point_inspector && overlapFree())
     {	
-    	inherit('inspector');
+    	$i('particle_inspection').style.display = "none"; $i('point_inspection').style.display = "inline";
+    	hidden('particle_inspection'); inherit('point_inspection');
     	dx = x - x_particle; dy = y - y_particle;
     	dt_1 = dt1(v,dx,dy); dt_2 = dt2(v,dx,dy);
     	x1 = x_particle - v*dt_1; y1 = 0; // position of particle at event 1
@@ -895,7 +921,27 @@ function drawFreeInspector()
 		set('real1',real1.toPrecision(3)); set('real2',real2.toPrecision(3));
 		set('real',real.toPrecision(3));
     }
-    else {hidden('inspector');}
+    else if (particle_inspector)
+    {	
+    	if (v == 0) {t_particle = t;}
+    	else {t_particle = t - (x_particle - x_inspector)/v;}
+    	if (t_particle < t) 		{$i('particle_time').title = "time particle was at this location";}
+    	else if (t_particle > t)	{$i('particle_time').title = "time particle will be at this location";}
+    	else                        {$i('particle_time').title = "time particle is at this location";}
+    	$i('point_inspection').style.display = "none"; $i('particle_inspection').style.display = "inline";
+    	hidden('point_inspection'); inherit('particle_inspection');
+
+    	cycle1 = Math.floor(omega*(t_particle/gamma)/(2*Math.PI)); // adjusted to moving particle's slower clock
+		cycle2 = Math.floor(omega*(t_particle/gamma)/(2*Math.PI)); // adjusted to moving particle's slower clock
+		phase1 = omega*(t_particle/gamma) % (2*Math.PI); // adjusted to moving particle's slower clock
+		phase2 = omega*(t_particle/gamma) % (2*Math.PI); // adjusted to moving particle's slower clock
+		real1 = Math.sin(phase1)/2; real2 = -Math.sin(phase2)/2; // normalized to real values between -1 and 1
+
+		set('t_part',(t_particle/fps).toPrecision(5));
+		set('cycle1_part',cycle1.toFixed()); set('cycle2_part',cycle2.toFixed());
+		set('phase1_part',phase1.toPrecision(3)); set('phase2_part',phase2.toPrecision(3));
+		set('real1_part',real1.toPrecision(3)); set('real2_part',real2.toPrecision(3));
+    }
     context.restore();
 }
 
@@ -1337,17 +1383,17 @@ function drawFreeNotation()
 	X2 = X1 + 150; Y2 = Y1 - 150;
 	drawLine(X1,Y1,X2,Y2,3,'white');
 	drawText("particle speed = v = " + v.toPrecision(3) + " c",X2,Y2,'left','middle',0);
-	drawText("particle frequency = mc\u00B2/(\u03B3h) = (Compton frequency)/\u03B3 = " + (1/gamma).toPrecision(3) + " Hz",X2,Y2+20,'left','middle',0);
+	drawText("particle frequency = mc\u00B2/(\u03B3h) = (Compton frequency)/\u03B3",X2,Y2+20,'left','middle',0);
 	if (v == 0)
 	{
 		drawLine(X1,Y1,X1,Y1+Y_delta+20,3,'white');
 		drawLine(X1+scale*fps,Y1,X1+scale*fps,Y1+Y_delta+20,3,'white');
 		drawText("Compton wavelength = h/(mc)",X1+scale*fps/2,Y1+Y_delta+25,'center','top');
 		drawText("Compton frequency = mc\u00B2/h",X1+scale*fps/2,Y1+Y_delta+45,'center','top');
-		drawText("speed of Compton wave = 0",X1+scale*fps/2,Y1+Y_delta+65,'center','top');
-		drawText("(retarded + advanced = standing Compton wave)",X1+scale*fps/2,Y1+Y_delta+85,'center','top');
+		drawText("Compton wave speed = c",X1+scale*fps/2,Y1+Y_delta+65,'center','top');
+		if (ret_waves && adv_waves) {drawText("(retarded + advanced = standing Compton wave)",X1+scale*fps/2,Y1+Y_delta+85,'center','top');}
 	}
-	else
+	else if(ret_waves && adv_waves)
 	{
 		u = c/v;
 		dB_wavelength = 1/(v*gamma); // relativistic de Broglie wavelength
@@ -1356,9 +1402,9 @@ function drawFreeNotation()
 		drawLine(X1-dX1,Y1+Y_delta,		X1-dX1,Y1+Y_delta+20,3,'white');
 		drawLine(X1-dX1,Y1+Y_delta+10,	X1+dX2,Y1+Y_delta+10,3,'white');
 		drawLine(X1+dX2,Y1+Y_delta,		X1+dX2,Y1+Y_delta+20,3,'white');
-		drawText("de Broglie wavelength = h/(\u03B3mv)",X1 + (dX2-dX1)/2,Y1+Y_delta+25,'center','top');
-		drawText("de Broglie frequency = \u03B3mc\u00B2/h",X1 + (dX2-dX1)/2,Y1+Y_delta+45,'center','top');
-		drawText("speed of de Broglie wave = c\u00B2/v = " + (1/v).toPrecision(3) + " c",X1 + (dX2-dX1)/2,Y1+Y_delta+65,'center','top');
+		drawText("de Broglie wavelength = h/(\u03B3mv)",X1,Y1+Y_delta+25,'center','top');
+		drawText("de Broglie frequency = \u03B3mc\u00B2/h",X1,Y1+Y_delta+45,'center','top');
+		drawText("de Broglie wave speed = c\u00B2/v = " + (1/v).toPrecision(3) + " c",X1,Y1+Y_delta+65,'center','top');
 	}
 }
 
@@ -1367,7 +1413,8 @@ function drawFree()
 	var controls_visibility;
 
 	set('time',(t/fps).toPrecision(5));
-	inspector = On('free_inspector_checkbox');
+	point_inspector = On('point_inspector_checkbox');
+	particle_inspector = On('particle_inspector_checkbox');
     ret_waves = On('retarded_checkbox');
     adv_waves = On('advanced_checkbox');
     notation = On('notation_checkbox');
@@ -1581,7 +1628,8 @@ function init()
 	frequency = 0.1;
 
 	notation = false; $i('notation_checkbox').checked = false;
-	inspector = false; $i('inspector_checkbox').checked = false; $i('free_inspector_checkbox').checked = false;
+	point_inspector = false; $i('point_inspector_checkbox').checked = false;
+	particle_inspector = false; $i('particle_inspector_checkbox').checked = false;
     pattern = false; $i('pattern_checkbox').checked = false;
     ret_waves = true; $i('retarded_checkbox').checked = true;
 	adv_waves = true; $i('advanced_checkbox').checked = true;
@@ -1803,8 +1851,13 @@ function change() {drawFrame();}
 
 function arrow(dX,dY) // move Inspector one pixel in X,Y coord
 {
-	if (inspector) {X_inspector = X_inspector + dX; Y_inspector = Y_inspector + dY;}
-	drawFrame();
+	if (inspector)
+	{
+		X_inspector = X_inspector + dX;
+		Y_inspector = Y_inspector + dY;
+		x_inspector = X_to_x(X_inspector); y_inspector = Y_to_y(Y_inspector);
+		drawFrame();
+	}
 }
 
 // capture:false means use bubble up, passive:false means allow preventDefault
@@ -1836,10 +1889,10 @@ document.addEventListener("keydown", function(e)
     const zoomKeys = ["+", "-", "_", "="]; // keys associated with zoom
     if (zoomKeys.includes(e.key)) {e.preventDefault(); zoom(e.key);}
   }*/
-  if (e.key == "ArrowRight")		{arrow(1,0);}
-  else if (e.key == "ArrowLeft") 	{arrow(-1,0);}
-  else if (e.key == "ArrowUp") 		{arrow(0,-1);}
-  else if (e.key == "ArrowDown") 	{arrow(0,1);}
+  if 		(e.key == "ArrowRight")	{arrow(1,0);}
+  else if 	(e.key == "ArrowLeft") 	{arrow(-1,0);}
+  else if 	(e.key == "ArrowUp") 	{arrow(0,-1);}
+  else if 	(e.key == "ArrowDown") 	{arrow(0,1);}
 });
 
 function toggleCheckbox(event)
@@ -1852,10 +1905,21 @@ function toggleCheckbox(event)
     for (let i = 0; i < count; i++)
     {
       node = event.currentTarget.childNodes[i];
-      if (node.nodeName == "INPUT") {node.checked = !node.checked; drawFrame(); return;}
+      if (node.nodeName == "INPUT")
+      {
+      	node.checked = !node.checked; drawFrame(); return;}
     }
   }
   else drawFrame();
+}
+
+function toggleInspector(event)
+{
+	if 		(event.target.id == 'point_inspector_checkbox') 	{$i('particle_inspector_checkbox').checked = false;}
+	else if (event.target.id == 'point_inspector') 				{$i('point_inspector_checkbox').checked = !$i('point_inspector_checkbox').checked; 			$i('particle_inspector_checkbox').checked = false;}
+	else if (event.target.id == 'particle_inspector_checkbox') 	{$i('point_inspector_checkbox').checked = false;}
+	else if (event.target.id == 'particle_inspector') 			{$i('particle_inspector_checkbox').checked = !$i('particle_inspector_checkbox').checked; 	$i('point_inspector_checkbox').checked = false;}
+	drawFrame();
 }
 
 // ranges
@@ -1883,13 +1947,14 @@ function eventListeners(down,out,up)
 	$i('retarded').addEventListener(up,					toggleCheckbox);
 	$i('advanced').addEventListener(up,					toggleCheckbox);
 	$i('dblslit_inspector').addEventListener(up,		toggleCheckbox);
-	$i('free_inspector').addEventListener(up,			toggleCheckbox);
+	$i('point_inspector').addEventListener(up,			toggleInspector);
+	$i('particle_inspector').addEventListener(up,		toggleInspector);
 
 	// buttons
 	$i('source_button').addEventListener(up,			sourceButton);
 	$i('destination_button').addEventListener(up,		destinationButton);
 	//$i('complex_button').addEventListener(up,			complexButton);
-	//$i('real_button').addEventListener(up,				realButton);
+	//$i('real_button').addEventListener(up,			realButton);
 	//$i('dblslit_button').addEventListener(up,		 	dblslitButton);
 	$i('free_button').addEventListener(up,				freeButton);
 	$i('zoom_out_button').addEventListener(down,      	zoom_out_down);
