@@ -69,7 +69,7 @@
 		  		<li><font color='lime'>retarded</font> and <font color='red'>advanced</font> waves leave the oscillator with opposite phases (&Delta; = &pi;)</li>
 		  		<li>time-symmetric waves are modeled after the Transactional Interpretation of QM</li>
 		  		<li>only the free particle case is depicted -- later versions will include double slit, Compton scattering, etc.</li>
-		  		<li>derivation of wave origin times is <span id="derivation_span" style="color:orange">here</span></li>
+		  		<li>derivation of wave origin times is <a href="derivation.pdf" target="_blank"><font color='orange'>here</font></a></li>
 		  	</ul>
 		  	<div style="margin:30px;">
 			TI references:<br>
@@ -87,7 +87,8 @@
 
 		<div id="derivation" style="font-family:Cambria,Math; background-color:rgb(0,0,0); position:absolute; color:rgb(255,255,255); text-align:center; height:100%; width:100%; padding:0px; border-width:0px; margin:0px; min-width:300px; z-index:2; visibility:hidden;">
       		<button type="button" id="return_from_derivation" style="font-weight:bold">RETURN</button>
-      		<iframe src="derivation.pdf" width="100%" height="100%" style="border:none;"></iframe>
+      		<!-- <iframe src="derivation.pdf" width="100%" height="100%" style="border:none;"></iframe> -->
+			<a href="derivation.pdf" target="_blank">View PDF</a>
     	</div>
 
 		<div id="UI" style="font-family:Arial,Helvetica,sans-serif; visibility:hidden; text-align:center; background-color:rgb(0,0,0); color:rgb(255,255,255); position:absolute; width:100%; left:0%; top:0px">
@@ -2184,7 +2185,7 @@ function eventListeners(down,out,up)
 	//$i('u_span').addEventListener(up,      				uSpan);
 	$i('gamma_span').addEventListener(up,      			gammaSpan);
 	$i('particle_time').addEventListener(up,			particle_timeSpan);
-	$i('derivation_span').addEventListener(up,			derivation);
+	//$i('derivation_span').addEventListener(up,			derivation);
   
   	// checkboxes as firstChild
   	$i('notation').addEventListener(up,        			toggleCheckbox);
