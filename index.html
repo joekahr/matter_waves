@@ -2019,12 +2019,10 @@ function toggleCheckbox(event)
     for (let i = 0; i < count; i++)
     {
       node = event.currentTarget.childNodes[i];
-      if (node.nodeName == "INPUT")
-      {
-      	node.checked = !node.checked; drawFrame(); return;}
+      if (node.nodeName == "INPUT") {node.checked = !node.checked; drawFrame(); return;}
     }
   }
-  else drawFrame();
+  else if (event.target.nodeName == "INPUT") {node.checked = !node.checked; drawFrame(); return;};
 }
 
 function toggleInspector(event)
