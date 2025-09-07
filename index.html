@@ -1801,8 +1801,8 @@ function pause_resumeButton()
 	drawFrame();
 }
 
-function forwardButton()  		{delta_t = Math.abs(delta_t); $i('forward_button').checked = true;show_table_column('point_table',1,true); drawFrame();}
-function backwardButton() 		{delta_t = -Math.abs(delta_t); show_table_column('point_table',1,false); $i('backward_button').checked = true; drawFrame();}
+function forwardButton()  		{delta_t = Math.abs(delta_t); $i('forward_button').checked = true; drawFrame();}
+function backwardButton() 		{delta_t = -Math.abs(delta_t); $i('backward_button').checked = true; drawFrame();}
 function stationaryButton()		{inspector_motion = "stationary";}
 function particleButton()		{inspector_motion = "particle"; t0_inspector = t; x0_inspector = x_inspector;}
 function deBroglieButton()		{inspector_motion = "de Broglie"; t0_inspector = t; x0_inspector = x_inspector;}
@@ -2022,7 +2022,7 @@ function toggleCheckbox(event)
       if (node.nodeName == "INPUT") {node.checked = !node.checked; drawFrame(); return;}
     }
   }
-  else if (event.target.nodeName == "INPUT") {node.checked = !node.checked; drawFrame(); return;};
+  else drawFrame();
 }
 
 function toggleInspector(event)
