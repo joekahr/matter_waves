@@ -7,7 +7,7 @@
         <meta name="description" content="Matter Waves">
         <meta name="author" content="joekahr@gmail.com">
         <meta name="generator" content="J. Kahr">
-        <meta name="version" content="7.3">
+        <meta name="version" content="7.4">
         <meta name="viewport" content="width=device-width,user-scalable=0,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0">
 	
         <style type="text/css">
@@ -1974,27 +1974,32 @@ function arrow(dX,dY) // move Inspector one pixel in X,Y coord
 	}
 }
 
+function contextmenu(event) {event.preventDefault();}
+
 // capture:false means use bubble up, passive:false means allow preventDefault
 
 canvas = $i('canvas');
-canvas.addEventListener("gesturestart",    gestureStart,   {capture:false, passive:false});
-canvas.addEventListener("gesturechange",   gestureChange,  {capture:false, passive:false});
-canvas.addEventListener("gestureend",      gestureEnd,     {capture:false, passive:false});
-canvas.addEventListener("touchstart",      touchStart,     {capture:false, passive:false});
-canvas.addEventListener("touchmove",       touchMove,      {capture:false, passive:false});
-canvas.addEventListener("touchend",        touchEnd,       {capture:false, passive:false});
-canvas.addEventListener("mousedown",       mouseDown,      {capture:false, passive:false});
-canvas.addEventListener("mousemove",       mouseMove,      {capture:false, passive:false});
-canvas.addEventListener("mouseup",         mouseUp,        {capture:false, passive:false});
+canvas.addEventListener("gesturestart",    gestureStart);
+canvas.addEventListener("gesturechange",   gestureChange);
+canvas.addEventListener("gestureend",      gestureEnd);
+canvas.addEventListener("touchstart",      touchStart);
+canvas.addEventListener("touchmove",       touchMove);
+canvas.addEventListener("touchend",        touchEnd);
+canvas.addEventListener("mousedown",       mouseDown);
+canvas.addEventListener("mousemove",       mouseMove);
+canvas.addEventListener("mouseup",         mouseUp);
+canvas.addEventListener("contextmenu",     contextmenu);
 
 controls = $i('controls');
-controls.addEventListener("change",		change,         {capture:false, passive:false});
-controls.addEventListener("touchstart", touchStart,     {capture:false, passive:false});
-controls.addEventListener("touchmove",  touchMove,      {capture:false, passive:false});
-controls.addEventListener("touchend",   touchEnd,       {capture:false, passive:false});
-controls.addEventListener("mousedown",  mouseDown,      {capture:false, passive:false});
-controls.addEventListener("mousemove",  mouseMove,      {capture:false, passive:false});
-controls.addEventListener("mouseup",    mouseUp,        {capture:false, passive:false});
+controls.addEventListener("change",		   change);
+controls.addEventListener("contextmenu",   contextmenu);
+/*controls.addEventListener("touchstart", touchStart);
+controls.addEventListener("touchmove",  touchMove);
+controls.addEventListener("touchend",   touchEnd);
+controls.addEventListener("mousedown",  mouseDown);
+controls.addEventListener("mousemove",  mouseMove);
+controls.addEventListener("mouseup",    mouseUp);*/
+
 
 document.addEventListener("keydown", function(e)
 {
