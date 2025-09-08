@@ -1857,7 +1857,7 @@ function mouseClick()
 
 function mouseDown(event)
 {
-	if (control_input(event.target)) return;
+	if (!started || control_input(event.target)) return;
     P_mousedown.x = event.pageX; P_mousedown.y = event.pageY;
 	dragging_inspector = inspector && (distance(x_to_X(x_inspector),y_to_Y(y_inspector), event.pageX,event.pageY) <= r_inspector) && (event.button==0);
     if (setting_source &&      (event.pageY > half_h) && (event.button==0))
@@ -1875,7 +1875,7 @@ function mouseDown(event)
 }
 function mouseMove(event)
 {
-    if (control_input(event.target)) return;
+    if (!started || control_input(event.target)) return;
     if (dragging_inspector)
     {
         X_inspector = event.pageX; Y_inspector = event.pageY;
@@ -1888,7 +1888,7 @@ function mouseMove(event)
 }
 function mouseUp(event)
 {
-    if (control_input(event.target)) return;
+    if (!started || control_input(event.target)) return;
     P_mouseup.x = event.pageX; P_mouseup.y = event.pageY;
     dragging_inspector = false;
     if ((P_mouseup.x == P_mousedown.x) && (P_mouseup.y == P_mousedown.y) && !control_input(event.target))
