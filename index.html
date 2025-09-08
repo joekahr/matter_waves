@@ -1834,12 +1834,13 @@ function realButton()			{complex = false;}
 
 function control_input(target)
 {
+  if (target.id == "canvas") return(false);
   return(target.type=='submit' || target.type=='button' || target.type=='checkbox' || target.type=='radio' || target.type=='range' || target.tagName=='SPAN' || target.tagName=='TD');
 }
 
 function mouseClick()
 {
-    if (control_input(event.target)) return;
+    if (!started || control_input(event.target)) return;
     if (setting_source) {setting_source = false; return;}
     if (setting_destination) {setting_destination = false; return;}
     if ((P_mouseup.x == prev_P_mouseup.x) || (P_mouseup.y == prev_P_mouseup.y)) return;
@@ -1852,7 +1853,6 @@ function mouseClick()
 	{
 		if (controls.style.visibility=='hidden') {inherit('freeparticle_controls'); inherit('controls');} else {hidden('controls'); hidden('freeparticle_controls');}
 	}
-	if (started) drawFrame();
 }
 
 function mouseDown(event)
