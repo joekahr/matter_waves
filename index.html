@@ -7,7 +7,7 @@
         <meta name="description" content="Matter Waves">
         <meta name="author" content="joekahr@gmail.com">
         <meta name="generator" content="J. Kahr">
-        <meta name="version" content="7.5">
+        <meta name="version" content="7.6">
         <meta name="viewport" content="width=device-width,user-scalable=0,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0">
 	
         <style type="text/css">
@@ -27,11 +27,11 @@
 			<button id="dblslit_button" type="button" style="text-align:center; background-color:rgb(0,255,0);">Light Waves</button>
 			<br> -->
 			<br>
-			<button id="free_button" type="button" style="text-align:center; background-color:rgb(0,255,0);">Free Particle</button>
+			<button id="free_button" title="Start the Free Particle Animation" type="button" style="text-align:center; background-color:rgb(0,255,0);">Free Particle</button>
 			<br><br><br>
-			<button title="Matter Waves App Description" type="button" id="description_button" style="text-align:center; font-weight:bold">Description</button>
+			<button id="description_button" title="Matter Waves App Description" type="button" style="text-align:center; font-weight:bold">Description</button>
 			<br><br><br>
-      		<button title="Mouse and Touch Screen Controls" type="button" id="UI_button" style="text-align:center; font-weight:bold">User Interface Help</button>
+      		<button id="UI_button" title="Mouse and Touch Screen Controls" type="button" style="text-align:center; font-weight:bold">User Interface Help</button>
         </div>
 
         <div id="description" style="font-family:Cambria,Math; text-align:left; background-color:rgb(0,0,0); color:rgb(255,255,255); position:absolute; width:100%; top:0px; padding:0px; border-width:0px; margin:0px; min-width:300px; z-index:2; visibility:hidden">
@@ -84,12 +84,6 @@
 			&nbsp;&nbsp;&nbsp;<a style="color:white" href="https://www.google.com/books/edition/Schrodinger_s_Kittens_and_the_Search_for/11ps2p8hIy8C"><b>Schrodinger's Kittens</b></a> book by John Gribbin<br>
 			</div>
 		</div>
-
-		<div id="derivation" style="font-family:Cambria,Math; background-color:rgb(0,0,0); position:absolute; color:rgb(255,255,255); text-align:center; height:100%; width:100%; padding:0px; border-width:0px; margin:0px; min-width:300px; z-index:2; visibility:hidden;">
-      		<button type="button" id="return_from_derivation" style="font-weight:bold">RETURN</button>
-      		<!-- <iframe src="derivation.pdf" width="100%" height="100%" style="border:none;"></iframe> -->
-			<a href="derivation.pdf" target="_blank">View PDF</a>
-    	</div>
 
 		<div id="UI" style="font-family:Arial,Helvetica,sans-serif; visibility:hidden; text-align:center; background-color:rgb(0,0,0); color:rgb(255,255,255); position:absolute; width:100%; left:0%; top:0px">
       		<table style="text-align:center; border-collapse:collapse; margin-left:auto; margin-right:auto">
@@ -173,8 +167,8 @@
         		<button title="Undo Zooming" id="zoom_zero_button" style="font-weight:bold; text-align:center; padding:0px; width:30px;">0</button>
         		<button title="Zoom In" id="zoom_in_button" style="font-weight:bold; text-align:center; padding:0px; width:30px;">+</button><br>
 	          	<span title="wave details [drag crosshairs to a wave or particle location]">inspect: </span>
-		        <span id="point_inspector" title="inspect a point"><input id="point_inspector_checkbox" type="checkbox">point</span>
-		        <span id="particle_inspector" title="inspect the particle"><input id="particle_inspector_checkbox" type="checkbox">particle</span><br>
+		        <span id="point_inspector" title="inspect a point within the wave packet"><input id="point_inspector_checkbox" type="checkbox">point</span>
+		        <span id="particle_inspector" title="inspect the particle along its path"><input id="particle_inspector_checkbox" type="checkbox">particle</span><br>
 	          	<span id="inspector" style="background-color:rgba(0,0,0,0); margin-top:auto; margin-bottom:auto; position:absolute; color:rgb(255,255,255); font-family:times; z-index:3; visibility:hidden;">
 	          		<span id="stationary_radio" title="inspection point stays stationary"><input id="stationary_button" type="radio" name="inspector_motion">stationary</span><br>
             		<span id="particle_radio" title="inspection point moves with particle at group velocity v"><input id="group_button" type="radio" name="inspector_motion">move at group velocity</span><br>
@@ -184,34 +178,34 @@
 			        	<span title="x coordinate of inspection point">x = <span id="x_inspect">0</span></span>&nbsp;&nbsp;
 			        	<span title="y coordinate of inspection point">y = <span id="y_inspect">0</span></span></span><br>
 	        		<span id="point_inspection">
-		        		<span>dx = <span id="dx">0</span></span>&nbsp;&nbsp;&nbsp;
-		        		<span>dy = <span id="dy">0</span></span><br>
+		        		<span title="x distance from particle to inspection point">dx = <span id="dx">0</span></span>&nbsp;&nbsp;&nbsp;
+		        		<span title="y distance from particle to inspection point">dy = <span id="dy">0</span></span><br>
 		        		<span id="sum" title="sum of real amplitudes of retarded and advanced waves">amplitude sum = <span id="real">0</span></span><br>
 		        		<table id='point_table'>
 		        			<tr title="waves arriving at inspection point from both time directions"><td>wave</td>
 		        				<td title="forward-in-time wave" style="color:lime">retarded</td>
 		        				<td title="backward-in-time wave" style="color:red">advanced</td></tr>
 		        			<tr title="distances from wave origins to inspection point"><td>r origin</td>
-		        				<td id="r1">0</td>
-		        				<td id="r2">0</td></tr>       				
+		        				<td id="r1" title="distance from retarded wave origin to inspection point">0</td>
+		        				<td id="r2" title="distance from advanced wave origin to inspection point">0</td></tr>       				
 		        			<tr title="x location of wave origins"><td>x origin</td>
-		        				<td id="x1">0</td>
-		        				<td id="x2">0</td></tr>
+		        				<td id="x1" title="x location of retarded wave origin">0</td>
+		        				<td id="x2" title="x location of advanced wave origin">0</td></tr>
 		        			<tr title="delta times"><td>dt</td>
-		        				<td id="dt1">0</td>
-		        				<td id="dt2">0</td></tr>
+		        				<td id="dt1" title="time since retarded wave origin">0</td>
+		        				<td id="dt2" title = "time until advanced wave origin">0</td></tr>
 		        			<tr title="time waves leave origins"><td>t origin</td>
-		        				<td id="t1">0</td>
-		        				<td id="t2">0</td></tr>
+		        				<td id="t1" title="time of retarded wave origin">0</td>
+		        				<td id="t2" title="time of advanced wave origin">0</td></tr>
 		        			<tr title="cycles of waves"><td>cycle</td>
-		        				<td id="cycle1">0</td>
-		        				<td id="cycle2">0</td></tr>
+		        				<td id="cycle1" title="cycle of retarded wave">0</td>
+		        				<td id="cycle2" title="cycle of advanced wave">0</td></tr>
 		        			<tr title="phases of waves"><td>phase</td>
-		        				<td id="phase1">0</td>
-		        				<td id="phase2">0</td></tr>
+		        				<td id="phase1" title="phase of retarded wave [radians]">0</td>
+		        				<td id="phase2" title="phase of advanced wave [radians]">0</td></tr>
 		        			<tr title="real amplitudes of waves"><td>amplitude</td>
-		        				<td id="real1">0</td>
-		        				<td id="real2">0</td></tr>
+		        				<td id="real1" title="real amplitude of retarded wave">0</td>
+		        				<td id="real2" title="real amplitude of advanced wave">0</td></tr>
 		        		</table>
 	        		</span>
 	        		<span id="particle_inspection">
@@ -221,14 +215,14 @@
 		        				<td title="forward-in-time wave" style="color:lime">retarded</td>
 		        				<td title="backward-in-time wave" style="color:red">advanced</td></tr>     				
 		        			<tr title="cycles of waves"><td>cycle</td>
-		        				<td id="cycle1_part">0</td>
-		        				<td id="cycle2_part">0</td></tr>
+		        				<td id="cycle1_part" title="cycle of retarded wave";>0</td>
+		        				<td id="cycle2_part" title="cycle of advanced wave";>0</td></tr>
 		        			<tr title="phases of waves"><td>phase</td>
-		        				<td id="phase1_part">0</td>
-		        				<td id="phase2_part">0</td></tr>
+		        				<td id="phase1_part" title="phase of retarded wave [radians]">0</td>
+		        				<td id="phase2_part" title = "phase of advanced wave [radians]">0</td></tr>
 		        			<tr title="real amplitudes of waves"><td>amplitude</td>
-		        				<td id="real1_part">0</td>
-		        				<td id="real2_part">0</td></tr>
+		        				<td id="real1_part" title="real amplitude of retarded wave">0</td>
+		        				<td id="real2_part" title="real amplitude of advanced wave">0</td></tr>
 		        		</table>
 	        		</span>
         		</span>
@@ -1008,8 +1002,8 @@ function drawFreeInspector()
 		set('r1',r1.toPrecision(4)); 		set('r2',r2.toPrecision(4));
 		set('cycle1',cycle1.toFixed()); 	set('cycle2',cycle2.toFixed());
 		set('phase1',phase1.toPrecision(3));set('phase2',phase2.toPrecision(3));
-		set('real1',real1.toPrecision(3)); 	set('real2',real2.toPrecision(3));
-		set('real',real.toPrecision(3));
+		set('real1',real1.toPrecision(5)); 	set('real2',real2.toPrecision(5));
+		set('real',real.toPrecision(5));
     }
     else if (particle_inspector)
     {	
@@ -1713,7 +1707,6 @@ function init()
   	scale = 1;
   	delta_t = 1;
   	t0_inspector = 0;
-  	setTitles();
 
   	document.querySelector('#speed_range').value = 0;
 
@@ -2076,73 +2069,18 @@ function setValue(id)
 	else if (id == 'phase2_part') 	value = phase2;
 	else if (id == 'real1_part') 	value = real1;
 	else if (id == 'real2_part') 	value = real2;
-	if (id == 't1' || id == 't2') $i(id).title = value + "\n[Click to jump to this time]";
-	else $i(id).title = value;
+	if (id == 't1' || id == 't2') value = value + "\n[Click to jump to this time]";
+	$i(id).title = value;
 }
 
-function setTitle(id)
+var saved_title;
+
+function showValue(event) {saved_title = event.target.title; setValue(event.target.id);}
+function showTitle(event)
 {
-	var title;
-
-	if 		(id == 'time') 			title = "current time\n[Click to change value]";
-	else if (id == 'v_over_c') 		title = "group velocity as fraction of c (0 <= v/c < 1)\n[Click to change value]";
-	else if (id == 'u_over_c') 		title = "phase velocity as fraction of c\n[Click to change value]";
-	else if (id == 'gamma') 		title = "Lorentz factor: ratio for length contraction and time dilation\n[Click to change value]";
-	else if (id == 'x_particle')	title = "x coordinate of particle";
-	else if (id == 'r1') 			title = "distance from retarded wave origin to inspection point";
-	else if (id == 'r2') 			title = "distance from advanced wave origin to inspection point";
-	else if (id == 'real') 			title = "sum of real amplitudes of retarded and advanced waves";
-	else if (id == 'dx') 			title = "x distance from particle to inspection point";
-	else if (id == 'dy') 			title = "y distance from particle to inspection point";
-	else if (id == 'x_inspect')		title = "x coordinate of inspection point";
-	else if (id == 'y_inspect') 	title = "y coordinate of inspection point";
-	else if (id == 'dt1') 			title = "time since retarded wave origin";
-	else if (id == 'dt2') 			title = "time until advanced wave origin";
-	else if (id == 't1') 			title = "time of retarded wave origin";
-	else if (id == 't2') 			title = "time of advanced wave origin";
-	else if (id == 'x1') 			title = "x location of retarded wave origin";
-	else if (id == 'x2')			title = "x location of advanced wave origin";
-	else if (id == 'cycle1') 		title = "cycle of retarded wave";
-	else if (id == 'cycle2') 		title = "cycle of advanced wave";
-	else if (id == 'phase1') 		title = "phase of retarded wave [radians]";
-	else if (id == 'phase2') 		title = "phase of advanced wave [radians]";
-	else if (id == 'real1') 		title = "real amplitude of retarded wave";
-	else if (id == 'real2') 		title = "real amplitude of advanced wave";
-	else if (id == 't_part')		title = "time particle is at this location";
-	else if (id == 'cycle1_part') 	title = "cycle of retarded wave";
-	else if (id == 'cycle2_part') 	title = "cycle of advanced wave";
-	else if (id == 'phase1_part') 	title = "phase of retarded wave [radians]";
-	else if (id == 'phase2_part') 	title = "phase of advanced wave [radians]";
-	else if (id == 'real1_part') 	title = "real amplitude of retarded wave";
-	else if (id == 'real2_part') 	title = "real amplitude of advanced wave"
-	$i(id).title = title;
+	if (saved_title == "") event.target.removeAttribute('title');
+	else event.target.title = saved_title;
 }
-
-function setTitles() // init dynamic titles
-{
-	setTitle('time');
-	setTitle('v_over_c');
-	setTitle('u_over_c');
-	setTitle('gamma');
-	setTitle('x_particle');
-	setTitle('real');
-	setTitle('r1');			setTitle('r2');
-	setTitle('dx');			setTitle('dy');
-	setTitle('x_inspect');	setTitle('y_inspect');
-	setTitle('dt1');		setTitle('dt2');
-	setTitle('t1');			setTitle('t2');
-	setTitle('x1');			setTitle('x2');
-	setTitle('t_part');
-	setTitle('cycle1');		setTitle('cycle2');
-	setTitle('phase1');		setTitle('phase2');
-	setTitle('real1');		setTitle('real2');
-	setTitle('cycle1_part');setTitle('cycle2_part');
-	setTitle('phase1_part');setTitle('phase2_part');
-	setTitle('real1_part');	setTitle('real2_part');
-}
-
-function showValue(event) {setValue(event.target.id);}
-function showTitle(event) {setTitle(event.target.id);}
 
 function titleValue(name) {$i(name).addEventListener("mouseenter",showValue); $i(name).addEventListener("mouseleave",showTitle);}
 
@@ -2189,7 +2127,6 @@ function eventListeners(down,out,up)
 	//$i('u_span').addEventListener(up,      				uSpan);
 	$i('gamma_span').addEventListener(up,      			gammaSpan);
 	$i('particle_time').addEventListener(up,			particle_timeSpan);
-	//$i('derivation_span').addEventListener(up,			derivation);
   
   	// checkboxes as firstChild
   	$i('notation').addEventListener(up,        			toggleCheckbox);
@@ -2227,7 +2164,6 @@ function eventListeners(down,out,up)
 	$i('return_from_description').addEventListener(up,  return_to_start);
 	$i('return_from_UI').addEventListener(up,          	return_to_start);
 	$i('description_button').addEventListener(up,     	description);
-	$i('return_from_derivation').addEventListener(up,	return_from_derivation);
 	//$i('FAQ_button').addEventListener(up,             FAQ);
 	$i('UI_button').addEventListener(up,              	UI);
 }
