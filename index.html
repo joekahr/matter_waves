@@ -7,7 +7,7 @@
         <meta name="description" content="Matter Waves">
         <meta name="author" content="joekahr@gmail.com">
         <meta name="generator" content="J. Kahr">
-        <meta name="version" content="7.4">
+        <meta name="version" content="7.5">
         <meta name="viewport" content="width=device-width,user-scalable=0,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0">
 	
         <style type="text/css">
@@ -186,7 +186,7 @@
 	        		<span id="point_inspection">
 		        		<span>dx = <span id="dx">0</span></span>&nbsp;&nbsp;&nbsp;
 		        		<span>dy = <span id="dy">0</span></span><br>
-		        		<span title="sum of real amplitudes of retarded and advanced waves">amplitude sum = <span id="real">0</span></span><br>
+		        		<span id="sum" title="sum of real amplitudes of retarded and advanced waves">amplitude sum = <span id="real">0</span></span><br>
 		        		<table id='point_table'>
 		        			<tr title="waves arriving at inspection point from both time directions"><td>wave</td>
 		        				<td title="forward-in-time wave" style="color:lime">retarded</td>
@@ -975,6 +975,7 @@ function drawFreeInspector()
 	context.textAlign = 'left';
 	context.textBaseline = 'top';
 	x = x_inspector; y = y_inspector;
+	if (!(ret_waves && adv_waves)) hidden('sum'); else inherit('sum');
     if (point_inspector && overlapFree())
     {	
     	if (ret_waves) {show_table_column('point_table',1,true);} else {show_table_column('point_table',1,false);}
