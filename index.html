@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-
+    	
     	<!-- Google tag (gtag.js) -->
 		<script async src="https://www.googletagmanager.com/gtag/js?id=G-E5FC699XWV"></script>
 		<script>
@@ -11,14 +11,13 @@
 
 		  gtag('config', 'G-E5FC699XWV');
 		</script>
-
         <title>Matter Waves</title>
 
         <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
         <meta name="description" content="Matter Waves">
         <meta name="author" content="joekahr@gmail.com">
         <meta name="generator" content="J. Kahr">
-        <meta name="version" content="7.6">
+        <meta name="version" content="7.8">
         <meta name="viewport" content="width=device-width,user-scalable=0,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0">
 	
         <style type="text/css">
@@ -54,7 +53,7 @@
       		Same as Macken:<br>
 		  	<ul>
 		    	<li>outgoing and incoming waves sum to create de Broglie waves</li>
-		    	<li>waves have real-value amplitudes that do not decrease with distance</li>
+		    	<li>monopole oscillator generates waves with real-value amplitudes</li>
 		    	<li>corresponding outgoing and incoming waves have opposite sign</li>
 		    	<li>time and distance scales are set to make standing and deBroglie waves visible</li>
 		  		<li>particle has an oscillator at its core with proper frequency = mc&sup2;/h</li>
@@ -75,11 +74,13 @@
 		  	Different from Macken:<br>
 		  	<ul>
 		  		<li>oscillator generates both <font color='lime'>retarded</font> (forward-in-time) and <font color='red'>advanced</font> (backward-in-time) waves</li>
+		  		<li>rotating dipole oscillator is not modeled</li>
+		  		<li>waves have amplitudes that decrease with distance (user settable)</li>
 		  		<li>viewed in normal time: <font color='lime'>retarded</font> waves are outgoing, <font color='red'>advanced</font> waves are incoming</li>
-		  		<li>no particle confinement is needed to reflect outgoing waves into incoming waves</li>
+		  		<li>no particle confinement or backward Huygens wavelets are needed to reflect outgoing waves into incoming waves</li>
 		  		<li><font color='lime'>retarded</font> and <font color='red'>advanced</font> waves leave the oscillator with opposite phases (&Delta; = &pi;)</li>
 		  		<li>time-symmetric waves are modeled after the Transactional Interpretation of QM</li>
-		  		<li>only the free particle case is depicted -- later versions will include double slit, Compton scattering, etc.</li>
+		  		<li>only the isolated free particle case is depicted -- later versions will include double slit, Compton scattering, etc.</li>
 		  		<li>derivation of wave origin times is <a href="derivation.pdf" target="_blank"><font color='orange'>here</font></a></li>
 		  	</ul>
 		  	<div style="margin:30px;">
@@ -107,7 +108,7 @@
         		<tr style="height:50px; border-bottom:1px solid blue"> <td style="text-align:left">show full precision of field while paused</td> <td style="border-left:3px solid blue; font-style:italic;">mouse hover</td> <td style="border-left:1px solid blue; font-style:italic;">N/A</td> </tr>
       		</table><br>
       		<br>
-      		step backward, step forward, and zoom buttons can be held down for continuous stepping or zooming
+      		step backward, step forward, zoom, and amplitude buttons<br>can be held down<br>for continuous stepping, zooming, or amplitude scaling
       		<br><br><br>
       		<button type="button" id="return_from_UI" style="font-weight:bold">RETURN</button>
     	</div>
@@ -153,6 +154,13 @@
 	        	<input id="complex_button" type="radio" name="wave_type">complex
 	        	<input id="real_button"    type="radio" name="wave_type">real<br>
 	        	<br> -->
+	        	<span title="wave amplitudes dependence on r">amplitudes &Proportional; 
+            	<span id="constant_radio" title="wave amplitudes not dependent on r"><input id="constant_button" type="radio" name="amp_depend"><span>constant</span></span>
+            	<span id="inverse_r_radio" title="wave amplitudes proportional to 1/r"><input id="inverse_r_button" type="radio" name="amp_depend"><span>1/r</span></span>
+            	<span id="inverse_r2_radio" title="wave amplitudes proportional to 1/r&sup2;&#013;[correct for 3-D]"><input id="inverse_r2_button" type="radio" name="amp_depend"><span>1/r&sup2;</span></span><br>
+            	<span title="Change Amplitude Scale">amplitude:</span>
+        		<button title="Decrease Amplitudes" id="amp_dec_button" style="font-weight:bold; text-align:center; padding:0px; width:30px;">-</button>
+        		<button title="Increase Amplitudes" id="amp_inc_button" style="font-weight:bold; text-align:center; padding:0px; width:30px;">+</button><br>
 	          	<span title="particle location">particle: 
 		          	<span title="x coordinate of particle">x = <span id="x_particle">0</span></span>&nbsp;&nbsp;
 		          	<span title="y coordinate of particle">y = <span id="y_particle">0</span></span></span><br>
@@ -540,7 +548,7 @@ Point2D.distance = function(P1, P2) {return distance(P1.x, P1.y, P2.x, P2.y); };
 var frame_timerID;  //interval timer ID
 var started=false;
 var inspector, point_inspector, particle_inspector, ret_waves, adv_waves, src_waves, dest_waves, left_slit, right_slit, paused, overlap_only, notation;  // checkbox toggles
-var inspector_motion; // 'stationary' or 'particle' or 'de Broglie'
+var inspector_motion; // 'stationary' or 'group' or 'phase'
 var inspector_current_time = false;
 var delta_t;
 var t;
@@ -558,6 +566,7 @@ var offset_y = 0;
 var x,y,dx,dy,dt_1,dt_2,t1,t2,x1,y1,x2,y2,r1,r2;
 var cycle1,cycle2,phase1,phase2,real1,real2,real;
 var t_particle;
+var amp_dep; // 'constant or 'inverse_r' or 'inverse_r2'
 
 // double slit variables
 var d_slits;   // distance between slits
@@ -604,7 +613,7 @@ var setting_destination = false;
 var rotation; //degrees
 var gesture=false;
 var scale;
-var prev_scale;
+var prev_scale, prev_amp_scale;
 var theta;  //rotation in radians
 var prev_theta;  //previous rotation in radians
 var canvas_x = 0; //x location of canvas origin
@@ -961,8 +970,8 @@ function drawFreeInspector()
 	else 							{hidden('inspector'); return;}
 	X_inspector = x_to_X(x_inspector);
 	if 		(inspector_motion == 'stationary'  || v==0) {context.translate(X_inspector, Y);}
-	else if (inspector_motion == 'particle') 			{if (!inspector_current_time) {x_inspector = x0_inspector + v*(t - t0_inspector); X_inspector = x_to_X(x_inspector);}; context.translate(X_inspector, Y);}
-	else if (inspector_motion == 'de Broglie' && v!=0) 	{x_inspector = x0_inspector + (t - t0_inspector)/v; context.translate(X_inspector, Y);}
+	else if (inspector_motion == 'group') 			{if (!inspector_current_time) {x_inspector = x0_inspector + v*(t - t0_inspector); X_inspector = x_to_X(x_inspector);}; context.translate(X_inspector, Y);}
+	else if (inspector_motion == 'phase' && v!=0) 	{x_inspector = x0_inspector + (t - t0_inspector)/v; context.translate(X_inspector, Y);}
 	else return;
 
 /*	context.beginPath();
@@ -999,7 +1008,7 @@ function drawFreeInspector()
 		cycle2 = Math.floor((omega*(t2/gamma) + Math.PI)/(2*Math.PI)); // adjusted to moving particle's slower clock
 		phase1 = omega*(t1/gamma) % (2*Math.PI); // adjusted to moving particle's slower clock
 		phase2 = (omega*(t2/gamma) + Math.PI) % (2*Math.PI); // adjusted to moving particle's slower clock
-		real1 = Math.sin(phase1)/2; real2 = Math.sin(phase2)/2; // normalized to real values between -1 and 1
+		real1 = realAmplitude(phase1,r1)/2; real2 = realAmplitude(phase2,r2)/2; // normalized to real values between -1 and 1
 		real = real1 + real2;
 
 		if (ret_waves) drawLine(x_to_X(x1),y_to_Y(y1),x_to_X(x_inspector), y_to_Y(y_inspector),3,'lime');
@@ -1032,7 +1041,7 @@ function drawFreeInspector()
 		cycle2 = Math.floor((omega*(t_particle/gamma) + Math.PI)/(2*Math.PI)); // adjusted to moving particle's slower clock
 		phase1 = omega*(t_particle/gamma) % (2*Math.PI); // adjusted to moving particle's slower clock
 		phase2 = (omega*(t_particle/gamma) + Math.PI) % (2*Math.PI); // adjusted to moving particle's slower clock
-		real1 = Math.sin(phase1)/2; real2 = Math.sin(phase2)/2; // normalized to real values between -1 and 1
+		real1 = realAmplitude(phase1,r1)/2; real2 = realAmplitude(phase2)/2; // normalized to real values between -1 and 1
 
 		set('t_part',t_particle.toPrecision(5));
 		set('x_inspect',x.toPrecision(5)); 			set('y_inspect',y.toPrecision(5));
@@ -1425,6 +1434,15 @@ function setAlpha(rgbaColorString, newAlpha)
 function dt1(v, dx, dy) {return (( v*dx + Math.sqrt((c*c-v*v)*(dy*dy) + c*c*dx*dx))/(c*c-v*v));}
 function dt2(v, dx, dy) {return ((-v*dx + Math.sqrt((c*c-v*v)*(dy*dy) + c*c*dx*dx))/(c*c-v*v));}
 
+var amp_scale;
+
+function realAmplitude(phase,r)
+{
+	if 		(amp_dep == 'constant') 	{return(amp_scale*Math.sin(phase));} // constant
+	else if (amp_dep == 'inverse_r') 	{return(amp_scale*Math.sin(phase)/r);} // inverse r
+	else if (amp_dep == 'inverse_r2')	{return(amp_scale*Math.sin(phase)/(r*r));} // inverse r squared
+}
+
 function drawPixelPair(dx,dy) // particle moves parallel to x-axis
 {
 	var color;
@@ -1432,13 +1450,14 @@ function drawPixelPair(dx,dy) // particle moves parallel to x-axis
 
 	dt_1 = dt1(v, dx, dy); // t - t1
 	dt_2 = dt2(v, dx, dy); // t2 - t
+	r1 = c*dt_1; r2 = c*dt_2;
 	x1 = x_particle - v*dt_1; // position of particle at event 1
 	x2 = x_particle + v*dt_2; // position of particle at event 2
 	t1 = t - dt_1; // stationary time retarded wave left moving particle
 	t2 = t + dt_2; // stationary time advanced wave will leave moving particle
 	phase1 = omega*(t1/gamma) % (2*Math.PI); // adjusted to moving particle's slower clock
 	phase2 = (omega*(t2/gamma) + Math.PI) % (2*Math.PI); // adjusted to moving particle's slower clock
-	real1 = Math.sin(phase1)/2; real2 = Math.sin(phase2)/2; // normalized to real values between -1 and 1
+	real1 = realAmplitude(phase1,r1)/2; real2 = realAmplitude(phase2,r2)/2; // normalized to real values between -1 and 1
 	if (ret_waves && adv_waves) {real = real1 + real2;}
 	else if (ret_waves && !adv_waves) {real = real1;}
 	else if (!ret_waves && adv_waves) {real = real2;}
@@ -1740,7 +1759,9 @@ function init()
 	right_slit = true; $i('right_slit_checkbox').checked = true;
 	src_waves = true; $i('source_waves_checkbox').checked = true;
 	dest_waves = true; $i('destination_waves_checkbox').checked = true;
-	inspector_motion = 'stationary'; $i('stationary_button').checked = true;
+	inspector_motion = 'group'; $i('group_button').checked = true;
+	amp_dep = 'constant'; amp_scale = 1;
+	$i('constant_button').checked = true;
 	//mode = '';
 
     //$i('arcs_checkbox').checked = false; $i('arcs_span').style.visibility = "hidden";
@@ -1806,11 +1827,21 @@ function pause_resumeButton()
 	drawFrame();
 }
 
+var prev_amp_scale;
+
 function forwardButton()  		{delta_t = Math.abs(delta_t); $i('forward_button').checked = true; drawFrame();}
 function backwardButton() 		{delta_t = -Math.abs(delta_t); $i('backward_button').checked = true; drawFrame();}
+function constantButton()  		{amp_dep = "constant"; 		amp_scale = 1;}
+function inverse_rButton() 		{amp_dep = "inverse_r"; 	amp_scale = 40;}
+function inverse_r2Button()		{amp_dep = "inverse_r2";	amp_scale = 1600;}
 function stationaryButton()		{inspector_motion = "stationary";}
-function particleButton()		{inspector_motion = "particle"; t0_inspector = t; x0_inspector = x_inspector;}
-function deBroglieButton()		{inspector_motion = "de Broglie"; t0_inspector = t; x0_inspector = x_inspector;}
+function particleButton()		{inspector_motion = "group"; t0_inspector = t; x0_inspector = x_inspector;}
+function deBroglieButton()		{inspector_motion = "phase"; t0_inspector = t; x0_inspector = x_inspector;}
+
+function amp_dec_down()       	{holdButtonOn(100, function() {amp_scale = amp_scale/1.2;});}
+function amp_dec_up()         	{prev_amp_scale = amp_scale; holdButtonOff();}
+function amp_inc_down()        	{holdButtonOn(100, function() {amp_scale = amp_scale*1.2;});}
+function amp_inc_up()          	{prev_amp_scale = amp_scale; holdButtonOff();}
 
 function fasterButton() 		{delta_t = delta_t*2;}
 function slowerButton() 		{delta_t = delta_t/2;}
@@ -2124,6 +2155,9 @@ function eventListeners(down,out,up)
 	// radio input
 	$i('forward_radio').addEventListener(up,        	forwardButton);
 	$i('backward_radio').addEventListener(up,       	backwardButton);
+	$i('constant_radio').addEventListener(up,        	constantButton);
+	$i('inverse_r_radio').addEventListener(up,       	inverse_rButton);
+	$i('inverse_r2_radio').addEventListener(up,       	inverse_r2Button);
 	$i('stationary_radio').addEventListener(up,			stationaryButton);
 	$i('particle_radio').addEventListener(up,       	particleButton);
 	$i('de_Broglie_radio').addEventListener(up,			deBroglieButton);
@@ -2150,6 +2184,12 @@ function eventListeners(down,out,up)
 	// buttons
 	$i('source_button').addEventListener(up,			sourceButton);
 	$i('destination_button').addEventListener(up,		destinationButton);
+	$i('amp_dec_button').addEventListener(down,       	amp_dec_down);
+	$i('amp_dec_button').addEventListener(out,        	amp_dec_up);
+	$i('amp_dec_button').addEventListener(up,         	amp_dec_up);
+	$i('amp_inc_button').addEventListener(down,       	amp_inc_down);
+	$i('amp_inc_button').addEventListener(out,        	amp_inc_up);
+	$i('amp_inc_button').addEventListener(up,         	amp_inc_up);
 	//$i('complex_button').addEventListener(up,			complexButton);
 	//$i('real_button').addEventListener(up,			realButton);
 	//$i('dblslit_button').addEventListener(up,		 	dblslitButton);
